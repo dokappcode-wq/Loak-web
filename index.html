@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=a875614d-73d2-4f3e-96c0-428756432e62
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Loak — talleres y retiros para dormir mejor. Reserva tu plaza.">
+<title>LOAK Sleep Wellness</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=Jost:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap">
+<script>document.documentElement.classList.add("js"); if (!/^#(eventos|servicios|hoteles|contacto|privacidad)/.test(location.hash)) document.documentElement.classList.add("locked");</script>
+
+<style>
+:root {
+  --ink: #0a3a40;
+  --ink-2: #0d4a50;
+  --night: #071e22;
+  --cream: #e8dcc0;
+  --sky: #9fd6ee;
+
+  --bg: #f6f5f0;
+  --surface: #ffffff;
+  --page-bg: #f6f5f0;
+  --text: #16282a;
+  --text-2: #4a6061;
+  --text-3: #7b8f90;
+  --rule: #dfddd3;
+  --accent: #1a8585;
+  --btn-bg: #0a3a40;
+  --btn-fg: #ffffff;
+
+  --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+
+  --x: clamp(1.25rem, 5vw, 4.5rem);
+  --max: 1180px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1416; --page-bg: #0d1416; --surface: #121c1f; --text: #e6ecec; --text-2: #b0bfc0;
+    --text-3: #7e9394; --rule: #223032; --accent: #4bc8c2;
+    --btn-bg: #a8edea; --btn-fg: #0a3a40;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1416; --page-bg: #0d1416; --surface: #121c1f; --text: #e6ecec; --text-2: #b0bfc0;
+  --text-3: #7e9394; --rule: #223032; --accent: #4bc8c2;
+  --btn-bg: #a8edea; --btn-fg: #0a3a40;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3, p { margin: 0; }
+section { scroll-margin-top: 70px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+::selection { background: #a8edea; color: #0a3a40; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--x); }
+.pad { padding-block: clamp(5rem, 10vw, 9rem); }
+
+.big {
+  font-family: var(--serif); font-weight: 200;
+  font-size: clamp(2.5rem, 6.4vw, 5.4rem);
+  line-height: 1.02; letter-spacing: -0.028em; text-wrap: balance;
+}
+.big em { font-style: italic; color: var(--accent); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+  padding: 1rem 1.6rem; border-radius: 999px;
+  background: var(--btn-bg); color: var(--btn-fg);
+  transition: transform .2s, opacity .2s;
+}
+.btn:hover { transform: translateY(-2px); opacity: .92; }
+
+.js .reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ───────── NAV (emerge desde las nubes) ───────── */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  padding: 1rem var(--x);
+  display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid var(--rule);
+  transform: translateY(85vh); opacity: 0; filter: blur(12px); pointer-events: none;
+  transition: transform .9s cubic-bezier(.2,.7,.15,1), opacity .7s ease .1s, filter .7s ease .1s;
+}
+.nav.visible { transform: none; opacity: 1; filter: none; pointer-events: auto; }
+.brand { font-family: var(--serif); font-weight: 300; font-size: 1.5rem; letter-spacing: -0.01em; }
+.nav-links { display: flex; gap: 2.2rem; font-family: var(--mono); font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-2); }
+.nav-links a:hover { color: var(--text); }
+.nav .btn { padding: .65rem 1.2rem; font-size: .66rem; }
+.nav-links a { padding-bottom: 3px; border-bottom: 1px solid transparent; white-space: nowrap; }
+.nav-links a.act { color: var(--text); border-bottom-color: var(--accent); }
+@media (max-width: 720px) {
+  .nav { flex-wrap: wrap; gap: .5rem 1rem; padding-bottom: .8rem; }
+  .nav-links { order: 3; flex-basis: 100%; gap: 1.4rem; overflow-x: auto; scrollbar-width: none; }
+}
+[hidden] { display: none !important; }
+
+/* ───────── HERO ───────── */
+.hero { position: relative; height: 150vh; background: #7ecfe5; }
+.hero-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; }
+.hero-sky {
+  position: absolute; inset: -6% -3% -3% -3%;
+  background: url("./sky.webp") center 45% / cover;
+  z-index: 1; will-change: transform;
+}
+.hero-inner {
+  position: absolute; inset: 0; z-index: 2; padding: 0 var(--x);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  will-change: transform, opacity, filter;
+}
+.hero-logo {
+  font-family: var(--serif); font-weight: 200;
+  font-size: clamp(5rem, 18vw, 15rem); letter-spacing: -0.02em; line-height: .9;
+  color: #0a3a40; opacity: 0;
+}
+.hero-title {
+  font-family: var(--serif); font-style: italic; font-weight: 300;
+  font-size: clamp(1rem, 1.7vw, 1.4rem); color: rgba(13,58,68,.72);
+  margin-top: .8rem; opacity: 0;
+}
+.hero-clouds { position: absolute; left: -8%; right: -8%; bottom: -12%; height: 65%; z-index: 3; pointer-events: none; will-change: transform; }
+.hero-clouds::after { content: ""; position: absolute; left: 0; right: 0; top: 99%; height: 300%; background: #fff; }
+.hero-clouds svg { width: 100%; height: 100%; display: block; filter: blur(2.5px); }
+.hero-fade { position: absolute; inset: 0; z-index: 4; background: #fff; opacity: 0; pointer-events: none; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+
+/* ───────── PANTALLA DE CARGA + BOTÓN DE ENTRADA ───────── */
+html.locked, html.locked body { overflow: hidden; }
+.ready .hero-logo { animation: fadeUp 1.1s .15s both; }
+.ready .hero-title { animation: fadeUp 1.2s .5s both; }
+.ready .hero-enter { animation: fadeUp 1.2s .9s both; }
+.hero-enter { margin-top: 2.6rem; opacity: 0; display: inline-flex; align-items: center; gap: .8rem; font-family: var(--mono); font-size: .74rem; letter-spacing: .26em; text-transform: uppercase;
+  padding: 1.05rem 1.9rem; border-radius: 999px; background: #0a3a40; color: #fff; transition: transform .25s, background .25s; }
+.hero-enter:hover { transform: translateY(-3px); background: #0d4a50; }
+.hero-enter span { display: inline-block; animation: bob 1.8s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+
+.loader { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; align-content: center; gap: 2.4rem; color: #0a3a40;
+  background: linear-gradient(rgba(255,255,255,.04), rgba(255,255,255,.04)), url("./sky.webp") center 45% / cover, #7ecfe5; transition: opacity 1s ease, visibility 1s; }
+.loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+.ld-scene { position: relative; width: clamp(240px, 30vw, 340px); height: clamp(200px, 24vw, 270px); }
+.ld-z { position: absolute; font-family: var(--serif); font-style: italic; font-weight: 200; color: #0a3a40; line-height: .8; opacity: 0; animation: zrise 3.2s ease-in-out infinite; text-shadow: 0 6px 30px rgba(255,255,255,.5); }
+.ld-z.z1 { left: 6%;  bottom: 0;   font-size: clamp(2.6rem, 5vw, 3.6rem); animation-delay: 0s; }
+.ld-z.z2 { left: 34%; bottom: 26%; font-size: clamp(4rem, 8vw, 5.8rem);  animation-delay: .55s; }
+.ld-z.z3 { left: 66%; bottom: 56%; font-size: clamp(6rem, 12vw, 9rem);   animation-delay: 1.1s; }
+@keyframes zrise { 0% { opacity: 0; transform: translate(-10px, 22px) scale(.8) rotate(-8deg); } 18% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); } 72% { opacity: 1; transform: translate(8px, -12px) scale(1.03) rotate(3deg); } 92%, 100% { opacity: 0; transform: translate(16px, -26px) scale(1.06) rotate(6deg); } }
+
+
+/* ───────── EL DÍA (la tira circadiana) ───────── */
+.dia { position: relative; z-index: 6; overflow-x: clip; margin-top: -60vh; padding-top: 8vh; padding-bottom: clamp(2rem, 5vw, 4rem);
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0, #fff 22vh); color: #16282a; text-align: center; }
+.dia .big { max-width: 15ch; margin: 0 auto; }
+.dia .big em { color: #1a8585; }
+.day {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; position: relative;
+}
+.day-line {
+  position: absolute; left: 8%; right: 8%; top: calc(1.2rem + .9rem + 31px); height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, #7ec2e3 0%, #f2d98e 28%, #8fd0c8 52%, #1e8c8c 76%, #0a3a40 100%);
+}
+.day li { position: relative; display: flex; flex-direction: column; align-items: center; }
+.day .t { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; line-height: 1.2rem; height: 1.2rem; color: #6a8081; margin-bottom: .9rem; }
+.day .ico {
+  width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
+  background: #fff; border: 1.5px solid #0a3a40; color: #0a3a40; position: relative;
+  transition: transform .3s, background .3s, color .3s;
+}
+.day li:hover .ico { transform: translateY(-4px) scale(1.06); background: #0a3a40; color: #fff; }
+.day svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.day .l { margin-top: 1rem; font-family: var(--serif); font-size: 1.15rem; font-weight: 400; line-height: 1.2; }
+@media (max-width: 760px) {
+  .day { grid-template-columns: repeat(3, 1fr); row-gap: 2.5rem; }
+  .day-line { display: none; }
+}
+
+/* ───────── FORMATOS ───────── */
+.cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 1.75rem); }
+@media (max-width: 820px) { .cards2 { grid-template-columns: 1fr; } }
+.fcard {
+  position: relative; overflow: hidden; border-radius: 28px;
+  min-height: clamp(460px, 62vh, 600px); padding: clamp(1.75rem, 3vw, 2.75rem);
+  display: flex; flex-direction: column; justify-content: space-between; gap: 2rem;
+}
+.fcard--sky { background: linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,.06)), url("./sky.webp") center 60% / cover; color: #0a3a40; }
+.fcard--night { background: radial-gradient(ellipse 70% 50% at 80% 12%, rgba(42,168,168,.35), transparent 70%), linear-gradient(165deg, #0d4a50 0%, #0a3a40 45%, #071e22 100%); color: #eaf5f4; }
+.fbig { font-family: var(--serif); font-weight: 200; font-size: clamp(6.5rem, 15vw, 12rem); line-height: .8; letter-spacing: -0.05em; }
+.fcard h3 { font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: -0.015em; line-height: 1.1; }
+.fcard h3 em { font-style: italic; }
+.fcard p { margin-top: .5rem; font-size: 1.05rem; opacity: .78; max-width: 26ch; }
+.fwide { flex-direction: row; align-items: flex-end; justify-content: space-between; min-height: clamp(420px, 56vh, 540px);
+  background: linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,.06)), url("./sky.webp") center 60% / cover; color: #0a3a40; }
+.fwide .fbig { align-self: flex-start; font-size: clamp(6rem, 17vw, 14rem); }
+.fside { display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; max-width: 420px; }
+.fbtns { display: flex; gap: .6rem; flex-wrap: wrap; }
+.fwide .btn:not(.ghost) { background: #0a3a40; color: #fff; }
+.btn.ghost { background: rgba(255,255,255,.35); color: #0a3a40; border: 1px solid #0a3a40; backdrop-filter: blur(6px); }
+@media (max-width: 760px) { .fwide { flex-direction: column; align-items: flex-start; } }
+.info-list { list-style: none; margin: 1.25rem 0 1.75rem; padding: 0; display: grid; gap: .9rem; }
+.info-list li { padding-left: 1.6rem; position: relative; color: var(--text-2); }
+.info-list li::before { content: ""; position: absolute; left: 0; top: .6em; width: .6rem; height: 1px; background: var(--accent); }
+.info-list b { color: var(--text); font-weight: 400; }
+.chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+.chips span {
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase;
+  padding: .5rem .9rem; border-radius: 999px; border: 1px solid currentColor; opacity: .85;
+}
+.fgo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.fgo a { font-family: var(--mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; display: inline-flex; gap: .6rem; align-items: center; border-bottom: 1px solid currentColor; padding-bottom: 4px; }
+.moon {
+  position: absolute; top: clamp(1.5rem, 3vw, 2.5rem); right: clamp(1.5rem, 3vw, 2.5rem);
+  width: clamp(70px, 9vw, 110px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, #fff8ec 0%, var(--cream) 42%, #c9b48a 100%);
+  box-shadow: 0 0 70px rgba(232,220,192,.45);
+}
+
+/* ───────── SESIONES ───────── */
+#sesiones { background: var(--surface); }
+.sec-head { display: flex; align-items: end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.filters { display: flex; gap: .5rem; flex-wrap: wrap; }
+.filters button {
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  padding: .6rem 1.05rem; border-radius: 999px; border: 1px solid var(--rule); color: var(--text-2);
+  transition: all .2s;
+}
+.filters button:hover { color: var(--text); border-color: var(--text-3); }
+.filters button.on { background: var(--btn-bg); color: var(--btn-fg); border-color: var(--btn-bg); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; }
+.scard { border-radius: 22px; overflow: hidden; background: var(--bg); border: 1px solid var(--rule); display: flex; flex-direction: column; transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
+.scard:hover { transform: translateY(-6px); box-shadow: 0 24px 50px -24px rgba(7,30,34,.4); }
+.sc-top { padding: 1.5rem 1.5rem 1.4rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; min-height: 150px; position: relative; }
+.sc-top.k-taller { background: linear-gradient(160deg, #8ccbe9, #d6ecf3); color: #0a3a40; }
+.sc-top.k-dia { background: linear-gradient(160deg, #0d4a50, #082b30); color: #eaf5f4; }
+.sc-top.k-empresa { background: linear-gradient(160deg, #ecdcb0, #f8f0da); color: #0a3a40; }
+.sc-date { display: flex; align-items: baseline; gap: .55rem; }
+.sc-day { font-family: var(--serif); font-weight: 200; font-size: 4.6rem; line-height: .8; letter-spacing: -0.05em; }
+.sc-mon { font-family: var(--mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+.sc-kind { font-family: var(--mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; padding: .4rem .75rem; border-radius: 999px; border: 1px solid currentColor; opacity: .85; white-space: nowrap; }
+.sc-body { padding: 1.3rem 1.5rem 0; flex: 1; }
+.sc-body h3 { font-family: var(--serif); font-weight: 400; font-size: 1.4rem; line-height: 1.15; letter-spacing: -0.01em; }
+.sc-body p { color: var(--text-3); font-size: .9rem; margin-top: .2rem; }
+.cap { margin-top: 1.1rem; display: flex; align-items: center; gap: .8rem; font-family: var(--mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
+.bar { flex: 1; height: 4px; border-radius: 4px; background: var(--rule); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.cap.low { color: #c2703d; } .cap.low .bar i { background: #c2703d; }
+.cap.full { color: var(--text-3); } .cap.full .bar i { background: var(--text-3); }
+.sc-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem 1.5rem; }
+.price { font-family: var(--serif); font-weight: 300; font-size: 1.7rem; letter-spacing: -0.02em; line-height: 1; }
+.price small { font-family: var(--mono); font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); margin-left: .35rem; }
+.scard .btn { padding: .75rem 1.2rem; font-size: .66rem; }
+.scard .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+
+
+.day li { cursor: default; outline-offset: 8px; }
+.day li:focus:not(:focus-visible) { outline: none; }
+.day .tip { position: absolute; left: 50%; top: calc(100% + .5rem); width: 210px; padding: .8rem 1rem; border-radius: 16px; background: #0a3a40; color: #eaf5f4; font-size: .85rem; line-height: 1.45; text-align: center;
+  box-shadow: 0 18px 40px -18px rgba(7,30,34,.5); opacity: 0; transform: translate(-50%, 6px); pointer-events: none; transition: opacity .25s, transform .25s; z-index: 5; }
+.day .tip::before { content: ""; position: absolute; left: 50%; top: -5px; width: 10px; height: 10px; background: #0a3a40; transform: translateX(-50%) rotate(45deg); }
+.day li:hover .tip, .day li:focus .tip { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 760px) {
+  .day li:nth-child(3n+1) .tip { left: 0; transform: translate(0, 6px); } .day li:nth-child(3n+1):hover .tip, .day li:nth-child(3n+1):focus .tip { transform: none; }
+  .day li:nth-child(3n) .tip { left: auto; right: 0; transform: translate(0, 6px); } .day li:nth-child(3n):hover .tip, .day li:nth-child(3n):focus .tip { transform: none; }
+  .day li:nth-child(3n+1) .tip::before { left: 2rem; } .day li:nth-child(3n) .tip::before { left: auto; right: 2rem; transform: rotate(45deg); }
+}
+
+/* ───────── CARRUSEL PRÓXIMO EVENTO ───────── */
+.proximo { background: #fff; color: #16282a; --surface: #fff; --bg: #f6f5f0; --text: #16282a; --text-2: #4a6061; --text-3: #7b8f90; --rule: #dfddd3; --accent: #1a8585; --btn-bg: #0a3a40; --btn-fg: #fff; padding-top: clamp(1rem, 3vw, 2.5rem); }
+.car-ctrl { display: flex; gap: .5rem; }
+.car-btn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--rule); font-size: 1.2rem; transition: background .2s, color .2s; }
+.car-btn:hover { background: #0a3a40; color: #fff; border-color: #0a3a40; }
+.car { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 28px; }
+.car::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; scroll-snap-align: start; display: grid; grid-template-columns: 1fr 1.1fr; min-height: clamp(420px, 58vh, 540px); border-radius: 28px; overflow: hidden; border: 1px solid var(--rule); background: var(--surface); }
+@media (max-width: 760px) { .slide { grid-template-columns: 1fr; } }
+.sl-date { position: relative; padding: clamp(1.5rem, 3vw, 2.5rem); display: flex; align-items: flex-end; min-height: 220px; color: #0a3a40;
+  background: linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,.06)), url("./sky.webp") center 55% / cover; }
+.sl-date.soon { background: linear-gradient(160deg, #e7ecec, #f4f6f3); color: #9db0b0; }
+.sl-day { font-family: var(--serif); font-weight: 200; font-size: clamp(6rem, 14vw, 11rem); line-height: .8; letter-spacing: -0.05em; }
+.sl-mon { font-family: var(--mono); font-size: .85rem; letter-spacing: .24em; text-transform: uppercase; margin-left: .8rem; }
+.sl-info { padding: clamp(1.5rem, 3vw, 2.75rem); display: flex; flex-direction: column; justify-content: space-between; gap: 1.5rem; }
+.sl-kind { align-self: flex-start; font-family: var(--mono); font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; padding: .45rem .85rem; border-radius: 999px; border: 1px solid var(--rule); color: var(--text-2); }
+.sl-info h3 { font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -0.02em; }
+.sl-info h3 + p { margin-top: .4rem; color: var(--text-3); }
+.sl-meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.sl-meta span { font-family: var(--mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; padding: .45rem .85rem; border-radius: 999px; background: var(--bg); color: var(--text-2); }
+.sl-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.sl-btns { display: flex; gap: .6rem; flex-wrap: wrap; }
+.proximo .btn.ghost { background: transparent; border: 1px solid #0a3a40; color: #0a3a40; backdrop-filter: none; }
+.proximo .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.dots { display: flex; gap: .5rem; justify-content: center; margin-top: 1.5rem; }
+.dots button { width: 9px; height: 9px; border-radius: 99px; background: #cdd8d8; transition: width .35s, background .35s; }
+.dots button.on { width: 30px; background: #0a3a40; }
+
+
+/* ── Carrusel a pantalla completa ── */
+.proximo { --fade: clamp(120px, 24vh, 240px); position: relative; padding: 0; min-height: 100svh; }
+.proximo .car { gap: 0; border-radius: 0; }
+.proximo .slide { min-height: 120svh; padding: calc(var(--fade) + 6.5rem) 0 clamp(6.5rem, 16vh, 9rem); border: 0; border-radius: 0; grid-template-columns: .8fr 1.4fr; }
+@media (max-width: 760px) { .proximo .slide { grid-template-columns: 1fr; grid-template-rows: 45svh 1fr; } }
+.proximo .sl-date { align-items: flex-end; padding: var(--x); }
+.proximo .sl-day { font-size: clamp(9rem, 28vw, 24rem); }
+.proximo .sl-mon { font-size: clamp(.9rem, 1.4vw, 1.2rem); margin-left: 1rem; }
+.proximo .sl-info { padding: calc(var(--x) * 1.2) var(--x) 7rem; justify-content: center; gap: 2.5rem; }
+.proximo .sl-info h3 { font-size: clamp(2.6rem, 6vw, 5.5rem); }
+.car-title { position: absolute; z-index: 5; top: calc(var(--fade) + .5rem); left: var(--x); color: #0a3a40; font-size: clamp(2rem, 4.5vw, 3.6rem); pointer-events: none; }
+.car-title em { color: #0d5a60; }
+.car-bar { position: absolute; z-index: 5; right: var(--x); bottom: clamp(1.5rem, 3vw, 2.5rem); display: flex; align-items: center; gap: 1.5rem; }
+.car-bar .dots { margin: 0; }
+@media (max-width: 760px) { .car-bar { left: var(--x); justify-content: space-between; } .proximo .sl-info { padding-bottom: 6rem; } }
+
+
+/* ── Foto a todo el rectángulo + formas circulares ── */
+.proximo .slide { background: var(--slide-bg, none) center 55% / cover; }
+.car-title { transition: color .5s; }
+.car-title.on-dark, .car-title.on-dark em { color: #fff; }
+.proximo .sl-date, .proximo .sl-date.soon { background: none; color: #0a3a40; align-items: center; justify-content: center; padding: var(--x); }
+.disc { width: clamp(240px, 26vw, 420px); aspect-ratio: 1; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.75), rgba(255,255,255,.28) 70%); border: 1px solid rgba(255,255,255,.7);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 30px 80px -30px rgba(10,58,64,.35), inset 0 0 60px rgba(255,255,255,.35); }
+.disc .sl-day { font-size: clamp(6rem, 15vw, 12rem); line-height: .85; }
+.disc .sl-mon { margin: .9rem 0 0; font-size: clamp(.8rem, 1.3vw, 1.1rem); letter-spacing: .3em; }
+.proximo .sl-date.soon .disc { border-style: dashed; opacity: .8; }
+.proximo .sl-info { margin: 0 clamp(1rem, 3vw, 3rem) 0 0; padding: clamp(1.75rem, 4vw, 4.5rem); border-radius: 56px;
+  background: rgba(255,255,255,.66); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.8); justify-content: center; }
+.proximo .sl-info h3 { font-size: clamp(2.2rem, 4.6vw, 4.2rem); }
+.proximo .sl-kind { background: rgba(255,255,255,.7); }
+.car-btn { background: rgba(255,255,255,.7); border-color: rgba(255,255,255,.9); backdrop-filter: blur(8px); }
+.dots button { background: rgba(10,58,64,.25); }
+@media (max-width: 760px) {
+  .proximo .slide { grid-template-rows: auto 1fr; }
+  .disc { width: min(62vw, 300px); }
+  .proximo .sl-date { padding-top: 0; padding-bottom: 1rem; }
+  .proximo .sl-info { margin: 0 var(--x); border-radius: 40px; }
+}
+
+
+/* ───────── SERVICIOS ───────── */
+.svc { background: var(--bg); padding-top: clamp(7rem, 12vw, 10rem); min-height: 100svh; }
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(1rem, 2vw, 1.5rem); margin-top: clamp(2.5rem, 5vw, 4rem); }
+.svc .fcard { min-height: clamp(440px, 60vh, 560px); }
+.svc .fbig { font-size: clamp(5rem, 9vw, 8rem); }
+.fcard .btn { background: #0a3a40; color: #fff; padding: .8rem 1.3rem; font-size: .66rem; }
+.fcard--night .btn { background: #a8edea; color: #0a3a40; }
+.fcard .fgo { align-items: flex-end; }
+@media (max-width: 720px) { .svc { padding-top: 9.5rem; } }
+
+
+.wa-btn { display: inline-flex; align-items: center; gap: .6rem; margin-top: 1.2rem; padding: .95rem 1.5rem; border-radius: 999px; background: #25d366; color: #fff; font-family: var(--mono); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; transition: transform .2s; }
+.wa-btn:hover { transform: translateY(-2px); }
+/* ───────── CONTACTO ───────── */
+.ctc { background: var(--bg); padding-top: clamp(7rem, 12vw, 10rem); min-height: 100svh; }
+.ctc-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+@media (max-width: 820px) { .ctc-wrap { grid-template-columns: 1fr; } }
+.ctc-left .moon { position: static; display: block; width: clamp(64px, 8vw, 96px); margin-bottom: 2rem; }
+.mail { display: inline-block; margin-top: 2rem; font-family: var(--serif); font-weight: 300; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.01em; color: var(--accent); border-bottom: 1px solid currentColor; padding-bottom: 4px; }
+.ctc-form { background: var(--surface); border: 1px solid var(--rule); border-radius: 36px; padding: clamp(1.75rem, 3.5vw, 3rem); }
+.ctc-form .go { width: 100%; justify-content: center; margin-top: 1.75rem; }
+.ctc-form .go:disabled { opacity: .5; cursor: wait; }
+.ctc-ok { margin-top: 1rem; text-align: center; color: var(--accent); }
+@media (max-width: 720px) { .ctc { padding-top: 9.5rem; } .proximo .sl-date { padding-top: 2rem; } }
+
+
+/* ───────── EVENTOS (lista) ───────── */
+.evt { background: var(--bg); padding-top: clamp(7rem, 12vw, 10rem); min-height: 100svh; }
+.evt .grid { margin-top: clamp(2rem, 4vw, 3rem); }
+.ev-sub { font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -0.02em; margin-top: clamp(3.5rem, 7vw, 6rem); padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.ev-empty { grid-column: 1 / -1; color: var(--text-3); font-family: var(--serif); font-style: italic; font-size: 1.1rem; }
+.scard.past { opacity: .6; filter: grayscale(.7); }
+.scard.past:hover { transform: none; box-shadow: none; }
+.sc-top.k-soon { background: linear-gradient(160deg, #e7ecec, #f4f6f3); color: #9db0b0; }
+.car-all { position: absolute; z-index: 5; left: var(--x); bottom: clamp(1.5rem, 3vw, 2.5rem); font-family: var(--mono); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; padding: .85rem 1.3rem; border-radius: 999px; background: rgba(255,255,255,.7); backdrop-filter: blur(8px); color: #0a3a40; border: 1px solid rgba(255,255,255,.9); transition: background .2s; }
+.car-all:hover { background: #fff; }
+@media (max-width: 760px) { .car-all { bottom: 5.2rem; } }
+
+/* Servicios */
+.svc-grid { grid-template-columns: 1fr 1fr; }
+@media (max-width: 760px) { .svc-grid { grid-template-columns: 1fr; } }
+
+
+/* Transición suave: la intro blanca se funde con el carrusel y el carrusel con lo que sigue */
+.proximo::before, .proximo::after { content: ""; position: absolute; left: 0; right: 0; z-index: 4; pointer-events: none; }
+.proximo::before { top: 0; height: var(--fade); background: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,.75) 35%, rgba(255,255,255,0) 100%); }
+.proximo::after { bottom: 0; height: clamp(80px, 14vh, 140px); background: linear-gradient(to top, var(--page-bg), color-mix(in srgb, var(--page-bg) 0%, transparent)); }
+
+
+/* Reserva / Inscripción */
+.seg { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: var(--bg); margin-bottom: .6rem; }
+.seg button { padding: .75rem 1rem; border-radius: 999px; font-family: var(--mono); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--text-2); transition: background .25s, color .25s; }
+.seg button.on { background: var(--btn-bg); color: var(--btn-fg); }
+.seg-note { font-size: .88rem; color: var(--text-3); margin-bottom: 1.5rem; padding-left: .4rem; }
+#bookForm.is-insc .only-reserva { display: none; }
+
+
+/* ───────── CARTEL + FOTOS ───────── */
+.proximo .sl-poster { width: clamp(260px, 30vw, 480px); aspect-ratio: 1; object-fit: cover; border-radius: 32px; box-shadow: 0 40px 90px -35px rgba(10,58,64,.55); border: 6px solid rgba(255,255,255,.75); transform: rotate(-2deg); transition: transform .5s; }
+.proximo .sl-poster:hover { transform: rotate(0) scale(1.02); }
+.sc-poster { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.info-poster { display: block; width: 100%; max-width: 360px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; margin: .5rem auto 1.5rem; }
+.photo { border-radius: 28px; background: #cfe3ea center / cover no-repeat; aspect-ratio: 4 / 5; margin-top: 2.5rem; box-shadow: 0 30px 70px -40px rgba(7,30,34,.5); }
+.photo--wide { aspect-ratio: 16 / 10; margin: 0 0 2rem; }
+@media (max-width: 820px) { .faq-left .photo { aspect-ratio: 16 / 9; } }
+.chk { display: flex !important; gap: .7rem; align-items: flex-start; font-family: var(--sans) !important; font-size: .92rem !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--text-2) !important; cursor: pointer; }
+.chk input { width: 18px !important; height: 18px; margin-top: .15rem; accent-color: var(--accent); flex: none; }
+.chk a { color: var(--accent); text-decoration: underline; }
+.field.check.bad .err { display: block; }
+
+/* ───────── PRIVACIDAD ───────── */
+.legal { background: var(--bg); padding-top: clamp(7rem, 12vw, 10rem); min-height: 100svh; }
+.legal-wrap { max-width: 760px; }
+.legal-date { margin-top: 1rem; font-family: var(--mono); font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+.legal h3 { font-family: var(--serif); font-weight: 400; font-size: 1.35rem; letter-spacing: -0.01em; margin: 2.4rem 0 .6rem; }
+.legal p, .legal li { color: var(--text-2); line-height: 1.7; }
+.legal ul { padding-left: 1.2rem; margin: .6rem 0 0; display: grid; gap: .5rem; }
+.legal b { color: var(--text); font-weight: 400; }
+.legal a { color: var(--accent); text-decoration: underline; }
+@media (max-width: 720px) { .legal { padding-top: 9.5rem; } }
+
+/* ───────── NOCHE / CIENCIA ───────── */
+.noche {
+  color: #eaf5f4; position: relative; overflow: hidden;
+  background:
+    radial-gradient(1.5px 1.5px at 8% 18%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 62%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 41% 12%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 63% 78%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 24%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 58%, rgba(255,255,255,.5) 50%, transparent 51%),
+    linear-gradient(180deg, #0a3a40 0%, #071e22 100%);
+}
+.noche .big em { color: #a8edea; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: clamp(3rem, 6vw, 5rem); }
+@media (max-width: 900px) { .stats { grid-template-columns: 1fr 1fr; } }
+.stat { padding-top: 1.4rem; border-top: 1px solid rgba(168,237,234,.25); }
+.stat b { display: block; font-family: var(--serif); font-weight: 200; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; letter-spacing: -0.04em; color: #a8edea; }
+.stat span { display: block; margin-top: .7rem; font-size: 1rem; color: rgba(234,245,244,.8); max-width: 18ch; }
+.stat small { display: block; margin-top: .6rem; font-family: var(--mono); font-size: .56rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(168,237,234,.4); }
+
+/* ───────── FAQ ───────── */
+.faq-wrap { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+@media (max-width: 820px) { .faq-wrap { grid-template-columns: 1fr; } }
+.faq { border-top: 1px solid var(--rule); }
+.faq details { border-bottom: 1px solid var(--rule); padding: 1.3rem 0; }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1.5rem; font-family: var(--serif); font-size: 1.3rem; font-weight: 400; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--sans); font-weight: 200; font-size: 1.6rem; line-height: 1; color: var(--accent); transition: transform .3s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq p { margin-top: .8rem; color: var(--text-2); max-width: 44ch; }
+
+/* ───────── CIERRE ───────── */
+.cierre {
+  min-height: 90vh; display: grid; place-items: center; text-align: center; color: #0a3a40; padding: 6rem var(--x) 14vh;
+  background: linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.05)), url("./sky.webp") center bottom / cover no-repeat, #7ecfe5;
+}
+.cierre .big { font-size: clamp(3.5rem, 11vw, 9.5rem); letter-spacing: -0.035em; }
+.cierre .big em { color: #0d5a60; display: block; }
+.cierre .btn { margin-top: 2.5rem; background: #0a3a40; color: #fff; }
+
+/* ───────── FOOTER ───────── */
+.footer { background: var(--night); color: rgba(168,237,234,.55); padding: 2.5rem var(--x); }
+.footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; padding: 0; }
+.footer .brand { color: rgba(242,251,250,.9); font-style: italic; font-weight: 200; font-size: 1.8rem; }
+.footer a { font-family: var(--mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; }
+.footer a:hover { color: #a8edea; }
+.footer small { font-family: var(--mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; opacity: .6; }
+
+/* ───────── MODAL ───────── */
+.scrim { position: fixed; inset: 0; z-index: 100; background: rgba(7,30,34,.6); backdrop-filter: blur(5px); display: none; align-items: flex-start; justify-content: center; padding: 1.5rem 1rem; overflow-y: auto; }
+.scrim.open { display: flex; animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--surface); color: var(--text); width: 100%; max-width: 560px; margin: 2rem auto; padding: clamp(1.75rem, 4vw, 2.5rem); border-radius: 24px; position: relative; animation: modalIn .4s cubic-bezier(.16,.68,.14,1); }
+@keyframes modalIn { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: none; } }
+.x { position: absolute; top: 1rem; right: 1rem; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; color: var(--text-3); }
+.x:hover { background: var(--bg); color: var(--text); }
+.modal h2 { font-family: var(--serif); font-weight: 300; font-size: clamp(1.7rem, 4vw, 2.2rem); line-height: 1.1; letter-spacing: -0.02em; padding-right: 2rem; }
+.m-sum { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0 1.75rem; }
+.m-sum span { font-family: var(--mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; padding: .45rem .85rem; border-radius: 999px; background: var(--bg); color: var(--text-2); }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+.fgrid .full { grid-column: 1 / -1; }
+@media (max-width: 520px) { .fgrid { grid-template-columns: 1fr; } }
+.field label { display: block; font-family: var(--mono); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); margin-bottom: .35rem; }
+.field input, .field select, .field textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--rule); padding: .5rem 0; border-radius: 0; font-size: 1rem; }
+.field select option { color: #16282a; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 64px; }
+.field .err { display: none; font-family: var(--mono); font-size: .66rem; color: #c2703d; margin-top: .3rem; }
+.field.bad .err { display: block; }
+.field.bad input { border-bottom-color: #c2703d; }
+.total { display: flex; justify-content: space-between; align-items: baseline; margin: 1.6rem 0 1.1rem; padding-top: 1.1rem; border-top: 1px solid var(--rule); }
+.total span { font-family: var(--mono); font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); }
+.total b { font-family: var(--serif); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; }
+.modal .go { width: 100%; justify-content: center; }
+.modal .go:disabled { opacity: .5; cursor: wait; }
+.form-err { margin-top: .9rem; font-size: .88rem; color: #c2703d; text-align: center; }
+.ok { display: none; text-align: center; padding: 1rem 0 .5rem; }
+.modal.done .ok { display: block; animation: fadeUp .5s both; }
+.modal.done .book { display: none; }
+.ok .moon { position: static; display: block; margin: 0 auto 1.5rem; width: 64px; }
+.ok h3 { font-family: var(--serif); font-weight: 300; font-size: 2rem; letter-spacing: -0.02em; }
+.ok p { margin: .6rem auto 1.4rem; color: var(--text-2); max-width: 30ch; }
+.ok code { font-family: var(--mono); font-size: .8rem; letter-spacing: .2em; color: var(--accent); padding: .6rem 1.1rem; border: 1px solid var(--accent); border-radius: 999px; }
+.hp { position: absolute; left: -9999px; }
+
+
+/* ───────── PARA HOTELES ───────── */
+.htl { background: var(--bg); padding-top: clamp(7rem, 12vw, 10rem); min-height: 100svh; }
+.htl .big { max-width: 16ch; }
+.htl-lead { margin-top: 1.2rem; font-size: 1.15rem; color: var(--text-2); max-width: 44ch; }
+.htl-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: clamp(2.5rem, 5vw, 4rem); padding-block: 1.75rem; border-block: 1px solid var(--rule); }
+.htl-stats b { display: block; font-family: var(--serif); font-weight: 200; font-size: clamp(2.6rem, 5.5vw, 4.4rem); line-height: 1; letter-spacing: -0.03em; color: var(--accent); }
+.htl-stats span { display: block; margin-top: .5rem; font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--text-3); }
+.htl-axes { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 1.5rem); margin-top: clamp(2rem, 4vw, 3rem); }
+.htl-axis { border-radius: 28px; padding: clamp(1.5rem, 3vw, 2.25rem); min-height: 240px; display: flex; flex-direction: column; justify-content: flex-end; gap: .4rem; }
+.htl-axis--cream { background: linear-gradient(160deg, #ecdcb0, #f8f0da); color: #0a3a40; }
+.htl-axis h3 { font-family: var(--serif); font-weight: 300; font-size: clamp(1.6rem, 2.6vw, 2.1rem); line-height: 1.1; letter-spacing: -0.015em; }
+.htl-axis p { opacity: .8; }
+.htl-cta { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; margin-top: clamp(2rem, 4vw, 3rem); }
+.htl-cta p { font-size: 1.1rem; color: var(--text-2); }
+.htl-cta b { color: var(--text); font-weight: 400; }
+
+/* ───────── MÓVIL ───────── */
+@media (max-width: 760px) {
+  :root { --x: 1.25rem; }
+  .nav { padding: .75rem var(--x) .6rem; }
+  .brand { font-size: 1.35rem; }
+  .nav .btn { padding: .55rem 1rem; font-size: .6rem; }
+  .nav-links { gap: .85rem; font-size: .56rem; letter-spacing: .08em; }
+  .big { font-size: clamp(2.2rem, 10vw, 3rem); }
+  .pad { padding-block: 4.5rem; }
+  .svc.pad, .evt.pad, .ctc.pad, .legal.pad, .htl.pad { padding-top: 8.25rem; }
+  .htl-stats { grid-template-columns: 1fr 1fr; }
+  .htl-axes { grid-template-columns: 1fr; }
+  .htl-axis { min-height: 150px; border-radius: 24px; padding: 1.4rem; }
+  .htl-cta .btn { width: 100%; justify-content: center; }
+
+  /* Carrusel: una sola pantalla, cartel + tarjeta compactos */
+  .proximo { --fade: 80px; }
+  .proximo .slide { min-height: 0; grid-template-rows: auto auto; padding: calc(var(--fade) + 4.2rem) 0 8.6rem; align-content: start; }
+  .car-title { top: calc(var(--fade) + .2rem); font-size: 2rem; }
+  .proximo .sl-date { padding: 0 var(--x) 1.25rem; }
+  .proximo .sl-poster { width: min(52vw, 210px); border-width: 4px; border-radius: 22px; }
+  .disc { width: min(58vw, 230px); }
+  .proximo .sl-info { margin: 0 var(--x); padding: 1.5rem; border-radius: 30px; gap: 1.2rem; justify-content: flex-start; }
+  .proximo .sl-info h3 { font-size: 2rem; }
+  .sl-foot { gap: .9rem; }
+  .sl-btns { width: 100%; }
+  .sl-btns .btn { flex: 1; justify-content: center; padding: .85rem .8rem; font-size: .62rem; }
+  .car-all { left: var(--x); right: var(--x); bottom: 4.6rem; text-align: center; }
+  .car-bar { left: var(--x); right: var(--x); bottom: 1.1rem; justify-content: space-between; }
+  .car-btn { width: 44px; height: 44px; }
+
+  /* Tarjetas de servicios sin hueco vacío */
+  .svc .fcard { min-height: 0 !important; gap: 1.4rem; padding: 1.6rem; border-radius: 24px; }
+  .svc .fbig, .fwide .fbig { font-size: 4.2rem; }
+  .fcard h3 { font-size: 1.8rem; }
+  .fcard .moon { width: 56px; }
+  .fgo { flex-direction: column; align-items: flex-start !important; }
+
+  /* Listado de eventos, contacto, privacidad */
+  .grid { grid-template-columns: 1fr; }
+  .ctc-form { border-radius: 24px; padding: 1.4rem; }
+  .photo--wide { aspect-ratio: 4 / 3; }
+  .mail { font-size: 1.3rem; word-break: break-all; }
+  .wa-btn { width: 100%; justify-content: center; }
+  .faq summary { font-size: 1.1rem; }
+  .footer .wrap { flex-direction: column; align-items: flex-start; gap: .9rem; }
+
+  /* Modales */
+  .scrim { padding: .75rem; }
+  .modal { margin: 1rem auto; border-radius: 22px; padding: 1.5rem 1.25rem; }
+  .info-poster { max-width: 260px; }
+
+  /* Cierre */
+  .cierre { min-height: 75svh; padding-bottom: 10vh; }
+}
+@media (max-width: 360px) {
+  .nav-links { gap: .6rem; font-size: .5rem; letter-spacing: .04em; }
+  .sl-btns { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- CARGA -->
+<div class="loader" id="loader" role="status" aria-label="Cargando">
+  <div class="ld-scene" aria-hidden="true">
+    <span class="ld-z z1">z</span><span class="ld-z z2">z</span><span class="ld-z z3">z</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#inicio" class="brand">Loak</a>
+  <div class="nav-links">
+    <a href="#eventos" data-v="eventos">Próximos eventos</a>
+    <a href="#servicios" data-v="servicios">Servicios</a>
+    <a href="#hoteles" data-v="hoteles">Para hoteles</a>
+    <a href="#contacto" data-v="contacto">Contacto</a>
+  </div>
+  <a href="#eventos" class="btn">Reservar</a>
+</nav>
+
+<!-- HERO -->
+<main id="v-inicio" class="view">
+<header class="hero" id="top">
+  <div class="hero-stage">
+    <div class="hero-sky" id="heroSky" aria-hidden="true"></div>
+    <div class="hero-inner" id="heroInner">
+      <div class="hero-logo">Loak</div>
+      <h1 class="hero-title">El día empieza <em>al despertar.</em></h1>
+      <button type="button" class="hero-enter" id="enter">Entrar <span aria-hidden="true">↓</span></button>
+    </div>
+    <div class="hero-fade" id="heroFade" aria-hidden="true"></div>
+    <div class="hero-clouds" id="heroClouds" aria-hidden="true">
+      <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <radialGradient id="cf1" cx="50%" cy="60%" r="60%"><stop offset="0%" stop-color="#fff" stop-opacity="1"/><stop offset="70%" stop-color="#fff" stop-opacity=".95"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          <radialGradient id="cf2" cx="50%" cy="55%" r="65%"><stop offset="0%" stop-color="#fff" stop-opacity=".98"/><stop offset="70%" stop-color="#fff" stop-opacity=".75"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="180" cy="380" rx="260" ry="90" fill="url(#cf2)" opacity=".75"/>
+        <ellipse cx="500" cy="360" rx="300" ry="105" fill="url(#cf2)" opacity=".8"/>
+        <ellipse cx="900" cy="370" rx="320" ry="100" fill="url(#cf2)" opacity=".75"/>
+        <ellipse cx="1280" cy="380" rx="260" ry="95" fill="url(#cf2)" opacity=".7"/>
+        <ellipse cx="120" cy="410" rx="220" ry="90" fill="url(#cf1)"/>
+        <ellipse cx="260" cy="380" rx="150" ry="70" fill="url(#cf1)"/>
+        <ellipse cx="420" cy="420" rx="200" ry="85" fill="url(#cf1)"/>
+        <ellipse cx="620" cy="390" rx="220" ry="90" fill="url(#cf1)"/>
+        <ellipse cx="820" cy="415" rx="200" ry="85" fill="url(#cf1)"/>
+        <ellipse cx="1000" cy="385" rx="180" ry="75" fill="url(#cf1)"/>
+        <ellipse cx="1180" cy="410" rx="220" ry="90" fill="url(#cf1)"/>
+        <ellipse cx="1360" cy="395" rx="180" ry="80" fill="url(#cf1)"/>
+        <ellipse cx="200" cy="460" rx="200" ry="80" fill="#fff" opacity=".98"/>
+        <ellipse cx="380" cy="450" rx="170" ry="70" fill="#fff" opacity=".96"/>
+        <ellipse cx="600" cy="465" rx="230" ry="85" fill="#fff"/>
+        <ellipse cx="820" cy="455" rx="180" ry="72" fill="#fff" opacity=".97"/>
+        <ellipse cx="1020" cy="470" rx="200" ry="80" fill="#fff"/>
+        <ellipse cx="1240" cy="460" rx="180" ry="72" fill="#fff" opacity=".98"/>
+        <rect x="-100" y="490" width="1640" height="200" fill="#fff"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- EL DÍA -->
+<section class="dia pad">
+  <div class="wrap">
+    <h2 class="big reveal">Tu noche se decide <em>durante el día.</em></h2>
+    <div style="position:relative; margin-top:clamp(3.5rem,7vw,6rem)">
+    <span class="day-line" aria-hidden="true"></span>
+    <ol class="day">
+      <li class="reveal" tabindex="0"><span class="t">07:00</span><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="l">Luz</span><span class="tip" role="tooltip">10–15 min de luz natural al despertar ponen en hora tu reloj.</span></li>
+      <li class="reveal" tabindex="0"><span class="t">07:45</span><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><path d="M12 7.5V14m0 0-4 6m4-6 4 6M5 10.5l7-3 7 3"/></svg></span><span class="l">Movimiento</span><span class="tip" role="tooltip">Subir la temperatura corporal por la mañana refuerza la señal de día.</span></li>
+      <li class="reveal" tabindex="0"><span class="t">13:15</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M3.5 12h17a8.5 8.5 0 0 1-17 0z"/><path d="M9 7.5c0-1.6 1.5-1.6 1.5-3.2M14 7.5c0-1.6 1.5-1.6 1.5-3.2"/></svg></span><span class="l">Comida fuerte</span><span class="tip" role="tooltip">La comida principal al mediodía, cuando la digestión rinde más.</span></li>
+      <li class="reveal" tabindex="0"><span class="t">17:15</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.5a2 2 0 0 1 0 4H16"/><path d="M3 3l18 18"/></svg></span><span class="l">Último café</span><span class="tip" role="tooltip">La cafeína dura 6–8 h: mejor cortarla a media tarde.</span></li>
+      <li class="reveal" tabindex="0"><span class="t">20:15</span><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3c3.2 4.2 6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 2.8-6.8 6-11z"/></svg></span><span class="l">Baño caliente</span><span class="tip" role="tooltip">Al salir, la temperatura baja y el cuerpo libera melatonina.</span></li>
+      <li class="reveal" tabindex="0"><span class="t">21:00</span><span class="ico"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 3l18 18"/></svg></span><span class="l">Pantallas off</span><span class="tip" role="tooltip">La luz azul frena la melatonina y retrasa el sueño.</span></li>
+    </ol>
+    </div>
+  </div>
+</section>
+
+<!-- PRÓXIMO EVENTO -->
+<section id="proximo" class="proximo">
+  <h2 class="big car-title">Próximo <em>evento.</em></h2>
+  <div class="car" id="car" tabindex="0" aria-roledescription="carrusel" aria-label="Próximos eventos"></div>
+  <div class="car-bar">
+    <div class="dots" id="dots"></div>
+    <div class="car-ctrl">
+      <button class="car-btn" id="carPrev" aria-label="Anterior">←</button>
+      <button class="car-btn" id="carNext" aria-label="Siguiente">→</button>
+    </div>
+  </div>
+  <a class="car-all" href="#eventos">Ver todos los eventos →</a>
+</section>
+
+<section id="faq" class="pad" style="background: var(--bg);">
+  <div class="wrap faq-wrap">
+    <div class="faq-left">
+      <h2 class="big reveal">Dudas <em>rápidas.</em></h2>
+      <div class="photo reveal" style="background-image: url('https://images.unsplash.com/photo-1593030019566-d681b01e877f?auto=format&fit=crop&w=1800&q=75')" role="img" aria-label="Cama con sábanas blancas junto a una ventana"></div>
+    </div>
+    <div class="faq reveal">
+      <details><summary>¿Cómo pago?</summary><p>Transferencia, tarjeta o en la sede. Tu plaza queda bloqueada 48 horas.</p></details>
+      <details><summary>¿Puedo cancelar?</summary><p>Reembolso completo hasta 7 días antes.</p></details>
+      <details><summary>¿Necesito saber yoga?</summary><p>No. Cualquier nivel.</p></details>
+      <details><summary>¿Y para mi empresa?</summary><p>Diseñamos sesiones para equipos. Escríbenos a <a href="mailto:loak.salud@gmail.com" style="color:var(--accent)">loak.salud@gmail.com</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="cierre">
+  <div>
+    <h2 class="big">Duerme <em>mejor.</em></h2>
+    <a href="#eventos" class="btn">Reservar plaza</a>
+  </div>
+</section>
+
+</main>
+
+<main id="v-eventos" class="view" hidden>
+  <section class="evt pad">
+    <div class="wrap">
+      <h2 class="big">Próximos <em>eventos.</em></h2>
+      <div class="grid" id="evFuture"></div>
+      <h3 class="ev-sub">Pasados</h3>
+      <div class="grid" id="evPast"></div>
+    </div>
+  </section>
+</main>
+
+<main id="v-servicios" class="view" hidden>
+  <section class="svc pad">
+    <div class="wrap">
+      <h2 class="big">Dos formas de <em>dormir mejor.</em></h2>
+      <div class="svc-grid">
+        <article class="fcard fcard--sky">
+          <div class="fbig">3h</div>
+          <div>
+            <h3>Taller <em>del sueño</em></h3>
+            <p>Entiende tu ritmo. Sal con tres cambios.</p>
+          </div>
+          <div class="fgo"><div class="chips"><span>12–20 personas</span></div><a href="#eventos" class="btn">Reservar</a></div>
+        </article>
+        <article class="fcard fcard--sky">
+          <span class="moon" aria-hidden="true"></span>
+          <div class="fbig">Retiro</div>
+          <div>
+            <h3>Retiro <em>del sueño</em></h3>
+            <p>Un fin de semana diseñado por tu reloj biológico.</p>
+          </div>
+          <div class="fgo"><div class="chips"><span>Casas rurales</span><span>8–14 personas</span></div><a href="#contacto" class="btn" data-interes="Retiro del sueño">Reservar retiro</a></div>
+        </article>
+        
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="v-hoteles" class="view" hidden>
+  <section class="htl pad">
+    <div class="wrap">
+      <h2 class="big">Tu hotel cuida cada detalle. <em>Excepto el sueño.</em></h2>
+      <p class="htl-lead">Auditoría del sueño: medimos el descanso de tus habitaciones y te decimos qué mejorar.</p>
+      <div class="htl-stats">
+        <div><b>3</b><span>ejes</span></div>
+        <div><b>18</b><span>métricas</span></div>
+        <div><b>90'</b><span>de visita</span></div>
+        <div><b>72 h</b><span>hasta el informe</span></div>
+      </div>
+      <div class="htl-axes">
+        <article class="htl-axis fcard--sky"><h3>Luz <em>y ruido</em></h3><p>Lo que más quejas genera.</p></article>
+        <article class="htl-axis htl-axis--cream"><h3>Colchón <em>y ropa de cama</em></h3><p>Soporte, firmeza e higiene.</p></article>
+        <article class="htl-axis fcard--night"><h3>Clima, <em>aire y CO₂</em></h3><p>Lo que no se ve, pero se nota.</p></article>
+      </div>
+      <div class="htl-cta">
+        <p>Recibes tu <b>Índice de Sueño</b> y 3 mejoras priorizadas.</p>
+        <a href="#contacto" class="btn" data-interes="Auditoría del sueño (hotel)">Pedir auditoría</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="v-contacto" class="view" hidden>
+  <section class="ctc pad">
+    <div class="wrap ctc-wrap">
+      <div class="ctc-left">
+        <div class="photo photo--wide" style="background-image: url('https://images.unsplash.com/photo-1488866022504-f2584929ca5f?auto=format&fit=crop&w=1800&q=75')" role="img" aria-label="Cielo estrellado sobre montañas"></div>
+        <h2 class="big">Hablemos <em>de sueño.</em></h2>
+        <a class="mail" href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a>
+        <a class="wa-btn" id="waContact" target="_blank" rel="noopener" href="#">WhatsApp · <span id="waNum"></span></a>
+      </div>
+      <form class='ctc-form' id='ctcForm' method='POST' name='contacto' novalidate>
+        <input type="hidden" name="form-name" value="contacto">
+        <p class="hp"><label>No rellenar <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="fgrid">
+          <div class="field"><label for="c-name">Nombre</label><input id="c-name" name="nombre" required autocomplete="name"><span class="err">Indica tu nombre.</span></div>
+          <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" name="email" required autocomplete="email"><span class="err">Email no válido.</span></div>
+          <div class="field full"><label for="c-topic">Me interesa</label>
+            <select id="c-topic" name="interes"><option>Taller del sueño</option><option>Retiro del sueño</option><option>Auditoría del sueño (hotel)</option><option>Otra cosa</option></select></div>
+          <div class="field full"><label for="c-msg">Mensaje</label><textarea id="c-msg" name="mensaje" rows="4"></textarea></div>
+          <div class="field full check"><label class="chk"><input type="checkbox" id="c-ok" name="acepta_privacidad" value="si" required> He leído la <a href="#privacidad">política de privacidad</a> y acepto que tratéis mis datos para responderme.</label><span class="err">Necesitamos tu consentimiento para responderte.</span></div>
+        </div>
+        <button type="submit" class="btn go" id="ctcGo">Enviar</button>
+        <p class="form-err" id="ctcErr" hidden></p>
+        <p class="ctc-ok" id="ctcOk" hidden>Recibido. Te respondemos en 24 horas.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<main id="v-privacidad" class="view" hidden>
+  <section class="legal pad">
+    <div class="wrap legal-wrap">
+      <h2 class="big">Privacidad <em>y cookies.</em></h2>
+      <p class="legal-date">Última actualización: 27 de octubre de 2026</p>
+
+      <h3>1. Quién es responsable de tus datos</h3>
+      <p><b>Responsable:</b> Asociación Estudiantil Junior Empresa Doka · <b>NIF:</b> G75475392 · <b>Domicilio:</b> Ibarra Zelaia Zelaigunea, 2, 20560 Oñate, Guipúzcoa · <b>Email:</b> <a href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a></p>
+
+      <h3>2. Qué datos recogemos</h3>
+      <ul>
+        <li><b>Formulario de contacto:</b> nombre, email, el servicio que te interesa y tu mensaje.</li>
+        <li><b>WhatsApp:</b> si pulsas «Reservar» o el botón de WhatsApp, se abre la aplicación de WhatsApp (Meta). Lo que nos escribas allí también lo trata WhatsApp según su propia política.</li>
+      </ul>
+
+      <h3>3. Para qué los usamos</h3>
+      <p>Para responder a tus consultas y gestionar tu reserva o inscripción en nuestros talleres, retiros y auditorías. No los usamos para enviarte publicidad sin tu permiso.</p>
+
+      <h3>4. Base legal</h3>
+      <p>Tu consentimiento al enviarnos el formulario o escribirnos, y la aplicación de medidas precontractuales cuando pides una reserva (art. 6.1.a y 6.1.b del RGPD).</p>
+
+      <h3>5. Cuánto tiempo los guardamos</h3>
+      <p>Mientras sea necesario para atender tu consulta o reserva y, después, durante los plazos que exija la ley.</p>
+
+      <h3>6. Con quién se comparten</h3>
+      <p>No cedemos tus datos a terceros salvo obligación legal. Usamos estos proveedores, que pueden tratar datos fuera del Espacio Económico Europeo con las garantías que exige el RGPD:</p>
+      <ul>
+        <li><b>Netlify</b>: alojamiento de la web y recepción del formulario de contacto.</li>
+        <li><b>WhatsApp (Meta)</b>: mensajería, solo si decides escribirnos por ahí.</li>
+        <li><b>Google Fonts</b> y <b>Unsplash</b>: tipografías e imágenes. Al cargarlas, tu navegador les envía tu dirección IP.</li>
+      </ul>
+
+      <h3>7. Tus derechos</h3>
+      <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad de tus datos, y retirar tu consentimiento cuando quieras, escribiendo a <a href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a>. Si crees que no los hemos tratado bien, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>).</p>
+
+      <h3 id="cookies">8. Cookies</h3>
+      <p>Esta web <b>no instala cookies</b> propias ni de terceros, ni de análisis ni de publicidad, así que no necesitamos pedirte permiso para usarlas. Si en el futuro añadimos alguna, lo indicaremos aquí y te pediremos consentimiento antes de activarla.</p>
+
+      <h3>9. Créditos de las imágenes</h3>
+      <p>Fotografías de <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>, bajo licencia Unsplash: <a href="https://unsplash.com/photos/milky-way-over-mountain-landscape-at-night-L95xDkSSuWw" target="_blank" rel="noopener">Nathan Anderson</a>, <a href="https://unsplash.com/photos/white-bed-linen-near-window-Uxtsu5i_msE" target="_blank" rel="noopener">Sarah Brown</a> y <a href="https://unsplash.com/photos/sunrise-over-a-misty-forest-and-field-dVjhUni3PXA" target="_blank" rel="noopener">Lutz Stallknecht</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span class="brand">Loak</span>
+    <a href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a>
+    <a href="#privacidad">Privacidad y cookies</a>
+    <small>© 2026 Loak</small>
+  </div>
+</footer>
+
+<!-- INFO -->
+<div class="scrim" id="infoScrim" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="modal">
+    <button class="x" id="infoClose" aria-label="Cerrar">✕</button>
+    <img class="info-poster" src="./img/namaste-cartel.jpg" alt="Cartel del Taller de Sueño en Namaste Yoga Bilbao, 13 de noviembre, 17:30–20:30" loading="lazy">
+    <h2 id="infoTitle">Taller del sueño</h2>
+    <ul class="info-list">
+      <li><b>Tu ritmo.</b> Cómo funciona tu reloj biológico.</li>
+      <li><b>Tu patrón.</b> Mapa personal de tu sueño y de lo que lo sabotea.</li>
+      <li><b>Tu plan.</b> Te llevas un diagnóstico y cambios concretos para casa.</li>
+    </ul>
+    <button type="button" class="btn go" id="infoBook">Reservar</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal" id="modal">
+    <button class="x" id="mClose" aria-label="Cerrar">✕</button>
+    <div class="book">
+      <h2 id="mTitle">Reserva</h2>
+      <div class="m-sum" id="mSum"></div>
+      <div class="seg" role="tablist" aria-label="Tipo">
+        <button type="button" role="tab" class="on" data-t="reserva">Reserva</button>
+        <button type="button" role="tab" data-t="inscripcion">Inscripción</button>
+      </div>
+      <p class="seg-note" id="segNote">Bloquea tu plaza y paga después.</p>
+
+      <form id='bookForm' method='POST' name='reserva' novalidate>
+        <input type="hidden" name="form-name" value="reserva">
+        <input type="hidden" name="tipo" id="f-type" value="reserva">
+        <input type="hidden" name="sesion" id="f-session">
+        <input type="hidden" name="codigo" id="f-code">
+        <p class="hp"><label>No rellenar <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="fgrid">
+          <div class="field full"><label for="f-name">Nombre</label><input type="text" id="f-name" name="nombre" required autocomplete="name"><span class="err">Indica tu nombre.</span></div>
+          <div class="field"><label for="f-email">Email</label><input type="email" id="f-email" name="email" required autocomplete="email"><span class="err">Email no válido.</span></div>
+          <div class="field"><label for="f-phone">Teléfono</label><input type="tel" id="f-phone" name="telefono" required autocomplete="tel"><span class="err">Indica un teléfono.</span></div>
+          <div class="field"><label for="f-count">Personas</label><select id="f-count" name="personas"></select></div>
+          <div class="field only-reserva"><label for="f-pay">Pago</label>
+            <select id="f-pay" name="pago"><option value="transferencia">Transferencia</option><option value="tarjeta">Tarjeta (enlace)</option><option value="sede">En la sede</option></select>
+          </div>
+          <div class="field full"><label for="f-notes">Notas (opcional)</label><textarea id="f-notes" name="notas"></textarea></div>
+        </div>
+        <div class="total only-reserva"><span>Total</span><b id="mTotal">—</b></div>
+        <button type="submit" class="btn go" id="mGo">Confirmar reserva</button>
+        <p class="form-err" id="mErr" hidden></p>
+      </form>
+    </div>
+
+    <div class="ok" aria-live="polite">
+      <span class="moon" aria-hidden="true"></span>
+      <h3 id="okTitle">Reserva recibida</h3>
+      <p id="okText">Te escribimos en 24 horas con los datos de pago.</p>
+      <code id="mCode">LOAK-000000</code>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Eventos (editar aquí) ── */
+const SESSIONS = [
+  { id: "namaste-nov13", url: "https://www.namasteyogabilbao.es/informacion-del-evento/taller-de-sueno-1", img: "sky.webp", poster: "namaste-cartel.jpg", tone: "light", kind: "taller", date: "2026-11-13", day: 13, mon: "Nov", year: 2026, time: "17:30 – 20:30", venue: "Namaste Yoga", city: "Bilbao", capacity: 12, taken: 5, price: 40, unit: "/ plaza" },
+  { id: "pronto-1", placeholder: true, bg: "url('https://images.unsplash.com/photo-1764800158262-7b159d50437a?auto=format&fit=crop&w=1800&q=75')" },
+  { id: "pronto-2", placeholder: true, bg: "url('https://images.unsplash.com/photo-1593030019566-d681b01e877f?auto=format&fit=crop&w=1800&q=75')" }
+];
+/* Fondo de cada evento: img = nombre de archivo dentro de /img (si no hay, se usa bg).
+   tone = "dark" si la foto es oscura (el título pasa a blanco). */
+const bgOf = s => s.img ? `url('./img/${s.img}')` : (s.bg || "none");
+/* Número de WhatsApp de LOAK, con prefijo de país y sin espacios (ej: 34600111222) */
+const WA_NUMBER = "34688723193";
+const waLink = (text) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+/* Reservar: si el evento tiene enlace propio, va ahí; si no, al WhatsApp */
+const reserve = (id) => {
+  const s = SESSIONS.find(x => x.id === id);
+  if (s && s.url) { window.open(s.url, "_blank", "noopener"); return; }
+  openWhatsApp(id);
+};
+const openWhatsApp = (id) => {
+  const s = SESSIONS.find(x => x.id === id);
+  const txt = s ? `Hola, quiero reservar el taller del ${s.day} de ${s.mon} en ${s.venue} (${s.city}).` : "Hola, quiero información sobre LOAK.";
+  window.open(waLink(txt), "_blank", "noopener");
+};
+const KIND = { taller: "Taller · 3h", empresa: "Empresa" };
+
+/* Qué eventos son futuros y cuáles pasados (según la fecha de hoy) */
+const isPast = s => !s.placeholder && new Date(s.date + "T23:59:59") < new Date();
+const real = SESSIONS.filter(s => !s.placeholder);
+const upcoming = real.filter(s => !isPast(s)).sort((a, b) => a.date.localeCompare(b.date));
+const past = real.filter(isPast).sort((a, b) => b.date.localeCompare(a.date));
+const CAR = [...upcoming.slice(0, 3), ...SESSIONS.filter(s => s.placeholder)].slice(0, 3);
+
+const car = document.getElementById("car"), dotsEl = document.getElementById("dots");
+function render() {
+  car.innerHTML = CAR.map(s => {
+    if (s.placeholder) return `
+      <article class="slide" style="--slide-bg: ${bgOf(s)}" data-tone="${s.tone || 'light'}">
+        <div class="sl-date soon"><div class="disc"><span class="sl-day">?</span></div></div>
+        <div class="sl-info">
+          <span class="sl-kind">Próximamente</span>
+          <div><h3>Nuevo evento</h3><p>Fecha y lugar por confirmar</p></div>
+          <div class="sl-foot"><div class="sl-btns"><button class="btn" disabled>Próximamente</button></div></div>
+        </div>
+      </article>`;
+    const left = s.capacity - s.taken;
+    const price = s.price == null ? "A medida" : `${s.price} €<small>${s.unit}</small>`;
+    return `
+      <article class="slide" style="--slide-bg: ${bgOf(s)}" data-tone="${s.tone || 'light'}">
+        <div class="sl-date">${s.poster ? `<img class="sl-poster" src="./img/${s.poster}" alt="Cartel del ${KIND[s.kind]} del ${s.day} de ${s.mon} en ${s.venue}, ${s.city}">` : `<div class="disc"><span class="sl-day">${s.day}</span><span class="sl-mon">${s.mon}</span></div>`}</div>
+        <div class="sl-info">
+          <span class="sl-kind">${KIND[s.kind]}</span>
+          <div>
+            <h3>${s.venue}</h3><p>${s.city}</p>
+            <div class="sl-meta"><span>${s.time}</span><span>${left <= 0 ? "Completo" : left <= 3 ? `Solo ${left} plazas` : `${left} plazas`}</span></div>
+          </div>
+          <div class="sl-foot">
+            <span class="price">${price}</span>
+            <div class="sl-btns">
+              <button class="btn" data-book="${s.id}" ${left <= 0 ? "disabled" : ""}>${left <= 0 ? "Completo" : "Reservar"}</button>
+              <button class="btn ghost" data-info>Más información</button>
+            </div>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+  dotsEl.innerHTML = CAR.map((_, i) => `<button aria-label="Evento ${i + 1}"></button>`).join("");
+  syncDots();
+}
+
+/* ── Carrusel: arrastrable, flechas, puntos y cambio automático ── */
+const SLIDE_MS = 6000;
+let timer = null, paused = false, carVisible = false;
+const idx = () => car.clientWidth ? Math.round(car.scrollLeft / car.clientWidth) : 0;
+function go(i) {
+  const n = CAR.length; i = (i + n) % n;
+  car.scrollTo({ left: i * car.clientWidth, behavior: "smooth" });
+}
+function syncDots() { const i = idx(); const sl = car.children[i]; document.querySelector(".car-title").classList.toggle("on-dark", !!sl && sl.dataset.tone === "dark"); [...dotsEl.children].forEach((d, k) => d.classList.toggle("on", k === i)); }
+function restart() {
+  clearInterval(timer);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  timer = setInterval(() => { if (!paused && carVisible && current === "inicio") go(idx() + 1); }, SLIDE_MS);
+}
+car.addEventListener("scroll", syncDots, { passive: true });
+if ("IntersectionObserver" in window) new IntersectionObserver(es => { carVisible = es[0].isIntersecting; }, { threshold: .5 }).observe(document.getElementById("proximo"));
+document.getElementById("carPrev").addEventListener("click", () => { go(idx() - 1); restart(); });
+document.getElementById("carNext").addEventListener("click", () => { go(idx() + 1); restart(); });
+dotsEl.addEventListener("click", e => { const k = [...dotsEl.children].indexOf(e.target.closest("button")); if (k >= 0) { go(k); restart(); } });
+car.addEventListener("keydown", e => { if (e.key === "ArrowRight") { go(idx() + 1); restart(); } if (e.key === "ArrowLeft") { go(idx() - 1); restart(); } });
+["pointerenter", "focusin", "touchstart"].forEach(ev => car.addEventListener(ev, () => { paused = true; }, { passive: true }));
+["pointerleave", "focusout", "touchend"].forEach(ev => car.addEventListener(ev, () => { paused = false; restart(); }, { passive: true }));
+document.addEventListener("visibilitychange", () => { paused = document.hidden; });
+
+/* ── Modal de reserva ── */
+const scrim = document.getElementById("scrim"), modal = document.getElementById("modal");
+const form = document.getElementById("bookForm"), count = document.getElementById("f-count");
+const mTotal = document.getElementById("mTotal"), mErr = document.getElementById("mErr"), mGo = document.getElementById("mGo");
+let active = null, lastFocus = null, type = "reserva";
+const TXT = {
+  reserva:     { note: "Bloquea tu plaza y paga después.", go: "Confirmar reserva", title: "Reserva recibida",     body: "Te escribimos en 24 horas con los datos de pago." },
+  inscripcion: { note: "Apúntate sin pagar ahora. Te avisamos con los detalles.", go: "Inscribirme", title: "Inscripción recibida", body: "Te escribimos en 24 horas con los detalles del evento." }
+};
+function setType(t) {
+  type = t;
+  document.getElementById("f-type").value = t;
+  form.classList.toggle("is-insc", t === "inscripcion");
+  document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  document.getElementById("segNote").textContent = TXT[t].note;
+  mGo.textContent = TXT[t].go;
+  document.getElementById("okTitle").textContent = TXT[t].title;
+  document.getElementById("okText").textContent = TXT[t].body;
+}
+document.querySelector(".seg").addEventListener("click", e => { const b = e.target.closest("button[data-t]"); if (b) setType(b.dataset.t); });
+
+function total() {
+  if (!active) return;
+  mTotal.textContent = active.price == null ? "A consultar" : `${(active.price * (+count.value || 1)).toLocaleString("es-ES")} €`;
+}
+function openModal(id) {
+  active = SESSIONS.find(s => s.id === id); if (!active) return;
+  lastFocus = document.activeElement;
+  const left = active.capacity - active.taken;
+  document.getElementById("mTitle").textContent = `${active.venue} · ${KIND[active.kind]}`;
+  document.getElementById("mSum").innerHTML = `<span>${active.day} ${active.mon} ${active.year}</span><span>${active.time}</span><span>${active.city}</span>`;
+  count.innerHTML = Array.from({ length: Math.min(6, left) }, (_, i) => `<option>${i + 1}</option>`).join("");
+  form.reset(); mErr.hidden = true; mGo.disabled = false; setType("reserva");
+  form.querySelectorAll(".bad").forEach(f => f.classList.remove("bad"));
+  modal.classList.remove("done");
+  total();
+  scrim.classList.add("open"); document.body.style.overflow = "hidden";
+  setTimeout(() => document.getElementById("f-name").focus(), 60);
+}
+function closeModal() {
+  scrim.classList.remove("open"); document.body.style.overflow = "";
+  if (lastFocus) lastFocus.focus();
+}
+count.addEventListener("change", total);
+car.addEventListener("click", e => {
+  const b = e.target.closest("[data-book]"); if (b && !b.disabled) reserve(b.dataset.book);
+  if (e.target.closest("[data-info]")) openInfo();
+});
+document.getElementById("mClose").addEventListener("click", closeModal);
+scrim.addEventListener("click", e => { if (e.target === scrim) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && scrim.classList.contains("open")) closeModal(); });
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = form.nombre, email = form.email, phone = form.telefono;
+  [name, email, phone].forEach(i => i.parentElement.classList.remove("bad"));
+  let ok = true;
+  if (!name.value.trim()) { name.parentElement.classList.add("bad"); ok = false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { email.parentElement.classList.add("bad"); ok = false; }
+  if (phone.value.trim().length < 6) { phone.parentElement.classList.add("bad"); ok = false; }
+  if (!ok) return;
+
+  const code = "LOAK-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  document.getElementById("f-code").value = code;
+  document.getElementById("f-session").value = `${active.venue} · ${KIND[active.kind]} · ${active.day} ${active.mon} ${active.year}`;
+  mGo.disabled = true; mGo.textContent = "Enviando…"; mErr.hidden = true;
+
+  try {
+    const res = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(new FormData(form)).toString()
+    });
+    if (!res.ok) throw new Error(res.status);
+    document.getElementById("mCode").textContent = code;
+    modal.classList.add("done");
+  } catch (err) {
+    mErr.textContent = "No se pudo enviar. Inténtalo de nuevo o escríbenos a loak.salud@gmail.com.";
+    mErr.hidden = false; mGo.disabled = false; mGo.textContent = TXT[type].go;
+  }
+});
+
+/* ── Más información ── */
+const infoScrim = document.getElementById("infoScrim");
+const closeInfo = () => { infoScrim.classList.remove("open"); document.body.style.overflow = ""; };
+const openInfo = () => { infoScrim.classList.add("open"); document.body.style.overflow = "hidden"; };
+document.getElementById("infoClose").addEventListener("click", closeInfo);
+document.getElementById("infoBook").addEventListener("click", () => { closeInfo(); reserve("namaste-nov13"); });
+infoScrim.addEventListener("click", e => { if (e.target === infoScrim) closeInfo(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeInfo(); });
+
+let current = "inicio";
+/* ── Hero: el título se hunde en las nubes; el menú emerge de ellas ── */
+const nav = document.getElementById("nav"), hero = document.querySelector(".hero");
+const heroInner = document.getElementById("heroInner"), heroSky = document.getElementById("heroSky"), heroClouds = document.getElementById("heroClouds"), heroFade = document.getElementById("heroFade");
+let ticking = false;
+function update() {
+  const y = window.scrollY;
+  const runway = Math.max(1, hero.offsetHeight - window.innerHeight);
+  const p = Math.max(0, Math.min(1, y / runway));
+  heroInner.style.transform = `translate3d(0, ${p * 60}px, 0)`;
+  heroInner.style.opacity = Math.max(0, 1 - p * 1.5);
+  heroInner.style.filter = `blur(${p * 6}px)`;
+  heroClouds.style.transform = `translate3d(0, ${-p * 80}%, 0) scale(${1 + p * .35})`;
+  heroFade.style.opacity = Math.max(0, Math.min(1, (p - .3) / .4));
+  heroSky.style.transform = `translate3d(0, ${-p * 6}%, 0)`;
+  nav.classList.toggle("visible", current !== "inicio" || y > runway * .35);
+  ticking = false;
+}
+window.addEventListener("scroll", () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } }, { passive: true });
+window.addEventListener("resize", update, { passive: true });
+
+/* ── Aparición suave al hacer scroll ── */
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+}), { threshold: .15 }) : null;
+document.querySelectorAll(".reveal:not(.in)").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+
+
+/* ── Lista de eventos (pestaña Próximos eventos) ── */
+function card(s, isOld) {
+  if (s.placeholder) return `
+    <article class="scard">
+      <div class="sc-top k-soon"><div class="sc-date"><span class="sc-day">?</span></div><span class="sc-kind">Próximamente</span></div>
+      <div class="sc-body"><h3>Nuevo evento</h3><p>Fecha y lugar por confirmar</p></div>
+      <div class="sc-foot"><span class="price"></span><button class="btn" disabled>Próximamente</button></div>
+    </article>`;
+  const left = s.capacity - s.taken;
+  const full = left <= 0, pct = Math.round(s.taken / s.capacity * 100);
+  const state = full ? "full" : left <= 3 ? "low" : "";
+  const txt = full ? "Completo" : left <= 3 ? `Solo ${left}` : `${left} plazas`;
+  const price = s.price == null ? "A medida" : `${s.price} €<small>${s.unit}</small>`;
+  return `
+    <article class="scard${isOld ? " past" : ""}">
+      ${s.poster ? `<img class="sc-poster" src="./img/${s.poster}" alt="Cartel del evento en ${s.venue}" loading="lazy">` : `<div class="sc-top k-${s.kind}">
+        <div class="sc-date"><span class="sc-day">${s.day}</span><span class="sc-mon">${s.mon} ${s.year}</span></div>
+        <span class="sc-kind">${KIND[s.kind]}</span>
+      </div>`}
+      <div class="sc-body">
+        <h3>${s.venue}</h3><p>${s.city}</p>
+        ${isOld ? "" : `<div class="cap ${state}"><span class="bar"><i style="width:${Math.max(pct, 4)}%"></i></span>${txt}</div>`}
+      </div>
+      <div class="sc-foot">
+        <span class="price">${price}</span>
+        ${isOld ? `<button class="btn" disabled>Finalizado</button>` : `<button class="btn" data-book="${s.id}" ${full ? "disabled" : ""}>${full ? "Completo" : "Reservar"}</button>`}
+      </div>
+    </article>`;
+}
+function renderList() {
+  document.getElementById("evFuture").innerHTML =
+    [...upcoming, ...SESSIONS.filter(s => s.placeholder)].map(s => card(s, false)).join("") ;
+  document.getElementById("evPast").innerHTML =
+    past.length ? past.map(s => card(s, true)).join("") : `<p class="ev-empty">Aún no hay eventos pasados.</p>`;
+}
+document.getElementById("evFuture").addEventListener("click", e => {
+  const b = e.target.closest("[data-book]"); if (b && !b.disabled) reserve(b.dataset.book);
+});
+
+/* ── Carga + entrada ── */
+const loader = document.getElementById("loader");
+const root = document.documentElement;
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const unlock = () => root.classList.remove("locked");
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+function smoothTo(y, ms) {
+  if (reduced || ms <= 0) { window.scrollTo(0, y); return; }
+  const from = window.scrollY, d = y - from, t0 = performance.now();
+  root.style.scrollBehavior = "auto";
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  (function step(now) {
+    const t = Math.min(1, (now - t0) / ms);
+    window.scrollTo(0, from + d * ease(t));
+    if (t < 1) requestAnimationFrame(step); else root.style.scrollBehavior = "";
+  })(t0);
+}
+document.getElementById("enter").addEventListener("click", () => {
+  unlock();
+  const runway = hero.offsetHeight - window.innerHeight;
+  smoothTo(runway * 1.15, 2200);
+});
+
+function finishLoading() {
+  root.classList.add("ready");
+  loader.classList.add("done");
+  setTimeout(() => loader.remove(), 1200);
+}
+if (root.classList.contains("locked")) {
+  window.scrollTo(0, 0);
+  const minTime = new Promise(r => setTimeout(r, reduced ? 700 : 2800));
+  const loaded = Promise.all([
+    new Promise(r => document.readyState === "complete" ? r() : window.addEventListener("load", r)),
+    document.fonts ? document.fonts.ready : Promise.resolve(),
+    new Promise(r => { const i = new Image(); i.onload = i.onerror = r; i.src = "./sky.webp"; })
+  ]);
+  Promise.all([minTime, loaded]).then(finishLoading);
+} else {
+  loader.remove(); root.classList.add("ready");
+}
+
+/* ── Servicios: el botón preselecciona el tipo en el formulario de contacto ── */
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-interes]");
+  if (a) document.getElementById("c-topic").value = a.dataset.interes;
+});
+
+/* ── WhatsApp en contacto ── */
+document.getElementById("waNum").textContent = "+34 688 72 31 93";
+document.getElementById("waContact").href = waLink("Hola, quiero información sobre LOAK.");
+
+/* ── Pestañas ── */
+const VIEWS = ["inicio", "eventos", "servicios", "hoteles", "contacto", "privacidad"];
+function route() {
+  const h = location.hash.slice(1);
+  current = VIEWS.includes(h) ? h : "inicio";
+  if (current !== "inicio") unlock();
+  VIEWS.forEach(n => { document.getElementById("v-" + n).hidden = n !== current; });
+  document.querySelectorAll(".nav-links a").forEach(a => a.classList.toggle("act", a.dataset.v === current));
+  window.scrollTo({ top: 0, behavior: "instant" });
+  update();
+  if (current === "inicio") { syncDots(); restart(); }
+}
+window.addEventListener("hashchange", route);
+
+/* ── Formulario de contacto ── */
+const ctc = document.getElementById("ctcForm");
+ctc.addEventListener("submit", async e => {
+  e.preventDefault();
+  const n = ctc.nombre, m = ctc.email, err = document.getElementById("ctcErr"), go = document.getElementById("ctcGo");
+  [n, m].forEach(i => i.parentElement.classList.remove("bad"));
+  let ok = true;
+  if (!n.value.trim()) { n.parentElement.classList.add("bad"); ok = false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.value.trim())) { m.parentElement.classList.add("bad"); ok = false; }
+  const okBox = document.getElementById("c-ok"); okBox.closest(".field").classList.toggle("bad", !okBox.checked); if (!okBox.checked) ok = false;
+  if (!ok) return;
+  go.disabled = true; go.textContent = "Enviando…"; err.hidden = true;
+  try {
+    const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(new FormData(ctc)).toString() });
+    if (!res.ok) throw new Error(res.status);
+    document.getElementById("ctcOk").hidden = false; ctc.reset(); go.textContent = "Enviado";
+  } catch (x) {
+    err.textContent = "No se pudo enviar. Escríbenos a loak.salud@gmail.com.";
+    err.hidden = false; go.disabled = false; go.textContent = "Enviar";
+  }
+});
+
+render(); renderList(); route(); restart();
+</script>
+</body>
+</html>
