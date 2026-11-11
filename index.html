@@ -9,7 +9,7 @@
 <meta name="description" content="Loak — talleres y retiros para dormir mejor. Reserva tu plaza.">
 <title>LOAK Sleep Wellness</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=Jost:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap">
-<script>document.documentElement.classList.add("js"); if (!/^#(eventos|servicios|hoteles|contacto|privacidad)/.test(location.hash)) document.documentElement.classList.add("locked");</script>
+<script>document.documentElement.classList.add("js"); if (!/^#(eventos|servicios|hoteles|contacto|privacidad|aprende)/.test(location.hash)) document.documentElement.classList.add("locked");</script>
 
 <style>
 :root {
@@ -601,6 +601,9 @@ html.locked, html.locked body { overflow: hidden; }
   .sl-btns { flex-direction: column; }
 }
 </style>
+<link rel="stylesheet" href="./aprende.css">
+<script src="./aprende-model.js" defer></script>
+<script src="./aprende.js" defer></script>
 </head>
 <body>
 
@@ -618,6 +621,7 @@ html.locked, html.locked body { overflow: hidden; }
     <a href="#eventos" data-v="eventos">Próximos eventos</a>
     <a href="#servicios" data-v="servicios">Servicios</a>
     <a href="#hoteles" data-v="hoteles">Para hoteles</a>
+    <a href="#aprende" data-v="aprende">Aprende a dormir</a>
     <a href="#contacto" data-v="contacto">Contacto</a>
   </div>
   <a href="#eventos" class="btn">Reservar</a>
@@ -784,6 +788,70 @@ html.locked, html.locked body { overflow: hidden; }
   </section>
 </main>
 
+<main id="v-aprende" class="view learn-page" hidden>
+  <div class="wrap learn-shell">
+    <div id="learn-dashboard">
+      <header class="learn-hero">
+        <div class="learn-hero-copy">
+          <p class="learn-eyebrow"><span class="learn-tiny-moon" aria-hidden="true">☾</span> LA ESCUELA DEL DESCANSO</p>
+          <h1>Tu descanso,<br>un pequeño paso<br><em>cada día.</em></h1>
+          <p>Conoce tu sueño. Cuida tus hábitos. Aprende a descansar con lecciones cortas y sin presión.</p>
+          <div class="learn-hero-meta"><span>6 lecciones</span><span>3–4 minutos cada una</span><span>A tu ritmo</span></div>
+        </div>
+        <div class="learn-hero-art" aria-hidden="true">
+          <svg viewBox="0 0 360 310" focusable="false">
+            <defs><linearGradient id="learn-orbit-bg" x2="0" y2="1"><stop stop-color="#d5e9df"/><stop offset="1" stop-color="#e8e4cc"/></linearGradient></defs>
+            <circle cx="180" cy="155" r="135" fill="url(#learn-orbit-bg)"/>
+            <ellipse cx="180" cy="155" rx="164" ry="83" transform="rotate(-24 180 155)" fill="none" stroke="#7ca69c" stroke-width="1" stroke-dasharray="3 8"/>
+            <path d="M226 67c-48-7-88 30-88 76 0 46 37 83 83 83 19 0 37-7 51-18-17 34-51 56-89 56-58 0-104-46-104-104S125 56 183 56c16 0 30 4 43 11Z" fill="#0a3a40"/>
+            <path d="M111 170q9 10 18 0m25 0q9 10 18 0" fill="none" stroke="#e8dcc0" stroke-width="3" stroke-linecap="round"/>
+            <ellipse cx="105" cy="183" rx="9" ry="4" fill="#59928c"/><ellipse cx="177" cy="183" rx="9" ry="4" fill="#59928c"/>
+            <path d="m258 94 3 10 10 3-10 3-3 10-3-10-10-3 10-3Zm-3 135 2 7 7 2-7 2-2 7-2-7-7-2 7-2ZM76 65l2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#0a3a40"/>
+            <circle cx="290" cy="159" r="4" fill="#397a72"/><circle cx="107" cy="265" r="3" fill="#397a72"/>
+            <path d="M195 115h16l-16 17h16m12-47h21l-21 22h21" fill="none" stroke="#397a72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="learn-art-caption">Noches más amables.<br>Sin buscar la perfección.</span>
+        </div>
+      </header>
+      <div id="learn-stats" class="learn-stats" aria-label="Tu progreso de aprendizaje"></div>
+      <div class="learn-layout">
+        <section class="learn-journey" aria-labelledby="learn-path-title">
+          <div class="learn-section-head"><div><p class="learn-eyebrow">PASO A PASO</p><h2 id="learn-path-title">Tu camino del sueño</h2></div><span id="learn-percent" class="learn-percent"></span></div>
+          <div class="learn-overall-track" aria-hidden="true"><span id="learn-overall-fill"></span></div>
+          <div id="learn-path"></div>
+          <div id="learn-path-finish" class="learn-path-finish"></div>
+        </section>
+        <aside class="learn-sidebar" aria-label="Tu práctica de hoy">
+          <section id="learn-daily" class="learn-daily"></section>
+          <section class="learn-pause">
+            <div class="learn-card-eyebrow"><span aria-hidden="true">≈</span> UNA PAUSA PARA TI</div>
+            <h2>Un minuto.<br>Un poco de calma.</h2>
+            <p>Deja lo que estés haciendo. Afloja los hombros y respira con suavidad.</p>
+            <button class="learn-secondary" id="learn-breathe-open" aria-expanded="false" aria-controls="learn-breathing">Hacer una pausa <span aria-hidden="true">↗</span></button>
+            <div id="learn-breathing" hidden>
+              <div class="learn-breath-orbit" id="learn-breath-orbit" aria-hidden="true"><span></span></div>
+              <p id="learn-breath-cue">Respira sin forzar.</p>
+              <p class="learn-breath-time"><span id="learn-breath-time" role="timer" aria-label="Segundos restantes">60</span> s</p>
+              <div class="learn-breath-actions"><button class="learn-secondary" id="learn-breath-toggle">Empezar</button><button class="learn-text-button" id="learn-breath-reset">Reiniciar</button></div>
+              <p class="learn-fine">La animación es orientativa: sigue tu propio ritmo. Si te incomoda, vuelve a respirar como siempre.</p>
+              <p id="learn-breath-status" class="learn-sr" role="status"></p>
+            </div>
+          </section>
+          <section class="learn-plans"><p class="learn-eyebrow">DE LA IDEA AL HÁBITO</p><h2>Mis pequeños pasos</h2><div id="learn-plans"></div></section>
+        </aside>
+      </div>
+      <section class="learn-bottom" aria-label="Sobre el aprendizaje">
+        <p><strong>Aprender, sin competir.</strong> Los puntos reconocen lo que aprendes, no cómo duermes. Puedes repasar sin perder vidas ni puntos.</p>
+        <details><summary>Sobre el contenido y tu privacidad</summary><p>Contenido educativo para adultos. No sustituye una valoración sanitaria. Si las dificultades persisten, tienes mucha somnolencia o pausas respiratorias nocturnas, consulta con un profesional.</p><p>Tu progreso y los pasos que elijas se guardan solo en este navegador, sin crear una cuenta. No se envían a LOAK ni se sincronizan entre dispositivos. Al borrar los datos del navegador, también se borrará este progreso.</p><p>Referencias: <a href="https://www.nhlbi.nih.gov/health/sleep-deprivation/healthy-sleep-habits" target="_blank" rel="noopener">NHLBI: hábitos de sueño</a>, <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener">CDC: el sueño</a> y <a href="https://www.nhs.uk/conditions/insomnia/" target="_blank" rel="noopener">NHS: insomnio</a>.</p><button id="learn-reset" class="learn-text-button">Borrar mi progreso de aprendizaje</button><div id="learn-reset-confirm" class="learn-reset-confirm" hidden><p>Se borrarán tus lecciones, puntos, racha y pequeños pasos guardados en este navegador.</p><button class="learn-secondary" id="learn-reset-cancel">Conservar mi progreso</button><button class="learn-text-button" id="learn-reset-yes">Sí, borrar mi progreso</button></div></details>
+      </section>
+      <noscript><p class="learn-storage-note">Activa JavaScript para hacer los ejercicios. También puedes consultar nuestros <a href="#servicios">talleres de sueño</a>.</p></noscript>
+    </div>
+    <section id="learn-player" class="learn-player" hidden aria-label="Lección interactiva"></section>
+    <p id="learn-storage" class="learn-storage-note" role="status" hidden></p>
+    <p id="learn-announcement" class="learn-sr" role="status" aria-atomic="true"></p>
+  </div>
+</main>
+
 <main id="v-contacto" class="view" hidden>
   <section class="ctc pad">
     <div class="wrap ctc-wrap">
@@ -847,8 +915,8 @@ html.locked, html.locked body { overflow: hidden; }
       <h3>7. Tus derechos</h3>
       <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad de tus datos, y retirar tu consentimiento cuando quieras, escribiendo a <a href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a>. Si crees que no los hemos tratado bien, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>).</p>
 
-      <h3 id="cookies">8. Cookies</h3>
-      <p>Esta web <b>no instala cookies</b> propias ni de terceros, ni de análisis ni de publicidad, así que no necesitamos pedirte permiso para usarlas. Si en el futuro añadimos alguna, lo indicaremos aquí y te pediremos consentimiento antes de activarla.</p>
+      <h3 id="cookies">8. Cookies y almacenamiento local</h3>
+      <p>No utilizamos cookies de análisis ni de publicidad. El apartado «Aprende a dormir» guarda en tu navegador las lecciones, respuestas comprobadas, puntos, días de práctica y hábitos que elijas, mediante almacenamiento local. Estos datos no se envían a LOAK ni se sincronizan entre dispositivos. Puedes borrarlos desde «Sobre el contenido y tu privacidad» dentro del apartado, o al borrar los datos del navegador.</p>
 
       <h3>9. Créditos de las imágenes</h3>
       <p>Fotografías de <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>, bajo licencia Unsplash: <a href="https://unsplash.com/photos/milky-way-over-mountain-landscape-at-night-L95xDkSSuWw" target="_blank" rel="noopener">Nathan Anderson</a>, <a href="https://unsplash.com/photos/white-bed-linen-near-window-Uxtsu5i_msE" target="_blank" rel="noopener">Sarah Brown</a> y <a href="https://unsplash.com/photos/sunrise-over-a-misty-forest-and-field-dVjhUni3PXA" target="_blank" rel="noopener">Lutz Stallknecht</a>.</p>
@@ -1229,7 +1297,7 @@ document.getElementById("waNum").textContent = "+34 688 72 31 93";
 document.getElementById("waContact").href = waLink("Hola, quiero información sobre LOAK.");
 
 /* ── Pestañas ── */
-const VIEWS = ["inicio", "eventos", "servicios", "hoteles", "contacto", "privacidad"];
+const VIEWS = ["inicio", "eventos", "servicios", "hoteles", "contacto", "privacidad", "aprende"];
 function route() {
   const h = location.hash.slice(1);
   current = VIEWS.includes(h) ? h : "inicio";
