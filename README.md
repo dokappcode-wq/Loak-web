@@ -26,19 +26,24 @@ El enlace **Aprende a dormir** del menú abre un recorrido de seis lecciones:
 5. Menos mitos, menos presión.
 6. Diseña tu pequeño ritual.
 
-Cada lección contiene una introducción, cuatro ejercicios y la elección de un hábito para probar. Hay preguntas de respuesta única, selección múltiple y ejercicios para ordenar pasos, utilizables con teclado mediante sus botones de subir y bajar. Cada respuesta incluye una explicación; las ideas que cuesten se repiten antes de terminar. No hay vidas ni penalizaciones.
+Cada lección contiene tres lecturas de teoría, cuatro ejercicios y la elección de un hábito para probar. El tiempo orientativo es de unos seis minutos, a tu ritmo. Hay preguntas de respuesta única, selección múltiple y ejercicios para ordenar pasos, utilizables con teclado mediante sus botones de subir y bajar. Cada respuesta incluye una explicación; las ideas que cuesten se repiten antes de terminar. No hay vidas ni penalizaciones.
+
+La sección tiene tres vistas: **Mi camino**, **Teoría** y **Conceptos**. La biblioteca incluye 18 ideas con explicaciones, ejemplos cotidianos, esquemas comparativos y referencias para ampliar. Se pueden buscar términos con o sin tildes, guardar ideas y marcarlas como leídas. Las lecturas son de acceso libre y no otorgan puntos ni desbloquean lecciones por sí solas. El diccionario reúne ocho conceptos, como ritmo circadiano, presión de sueño, REM y TCC-I.
+
+Durante una lección puedes avanzar o retroceder por las tres lecturas y retomar la misma página al recargar. También puedes pasar directamente a los ejercicios. Cada ejercicio permite consultar la teoría de su lección sin perder la respuesta seleccionada. Al terminar hay un resumen de las tres ideas clave.
 
 La primera finalización de una lección otorga **50 puntos**. Los repasos registran la práctica del día sin duplicarlos. La racha cuenta días locales con una lección o repaso terminado, no noches de buen sueño. El objetivo diario es una lección o repaso; no bloquea continuar.
 
-El progreso, las respuestas comprobadas y los hábitos se guardan únicamente en `localStorage`, bajo la clave `loak-sleep-learning-v2`. «Guardar y salir» conserva la lección; al volver se puede retomarla, también tras recargar. No hay cuentas, seguimiento del sueño, envíos a LOAK ni sincronización entre dispositivos. Si el navegador bloquea el almacenamiento, se informa y los ejercicios siguen funcionando en memoria. El borrado de progreso requiere una confirmación y no toca datos de otras aplicaciones.
+El progreso, las respuestas comprobadas, las lecturas, las ideas guardadas y los hábitos se guardan únicamente en `localStorage`, bajo la clave `loak-sleep-learning-v2`. «Guardar y salir» conserva la lección; al volver se puede retomarla, también tras recargar. No hay cuentas, seguimiento del sueño, envíos a LOAK ni sincronización entre dispositivos. La ampliación mantiene la clave y los progresos de la versión anterior: no obliga a repetir lo completado. Si el navegador bloquea el almacenamiento, se informa y los ejercicios siguen funcionando en memoria. El borrado de progreso requiere una confirmación y no toca datos de otras aplicaciones.
 
 La pausa opcional de 60 segundos permite empezar, pausar y reiniciar. Se pausa al salir del apartado o al ocultar la pestaña. La animación respeta la preferencia de reducir movimiento y no es necesario acompasar la respiración con ella.
 
-El contenido es educativo para adultos y no diagnostica ni sustituye atención sanitaria. Incluye referencias a NHLBI, CDC y NHS. Para ampliar preguntas o adaptar el material a una revisión profesional, edita `aprende-model.js`.
+El contenido es educativo para adultos y no diagnostica ni sustituye atención sanitaria. Incluye referencias a NHLBI, CDC y NHS. Para ampliar preguntas o adaptar el material a una revisión profesional, edita `aprende-model.js` (ejercicios y reglas) o `aprende-theory.js` (teoría, diccionario y referencias).
 
 ## Archivos
 
 - `index.html`: página, estilos originales y navegación por secciones.
+- `aprende-theory.js`: 18 lecturas, ejemplos, conceptos y siete fuentes de salud.
 - `aprende-model.js`: contenido, reglas de avance, puntos y validación del estado guardado.
 - `aprende.js`: interfaz, interacción, guardado y pausa opcional.
 - `aprende.css`: diseño de la escuela, móvil, temas claro/oscuro y movimiento reducido.
@@ -56,7 +61,13 @@ npm run check
 npm test
 ```
 
-Las pruebas usan jsdom para recorrer las lecciones y comprobar almacenamiento, navegación, repasos, selección múltiple, ordenación y controles de la pausa. No sustituyen la revisión visual en un navegador real ni una auditoría completa de accesibilidad.
+Las pruebas usan jsdom para recorrer las lecciones y comprobar almacenamiento, navegación, repasos, selección múltiple, ordenación, controles de la pausa, búsqueda, guardado de ideas, lectura de teoría y compatibilidad con el progreso anterior. No sustituyen la revisión visual en un navegador real ni una auditoría completa de accesibilidad.
+
+## Versión privada de revisión
+
+[LOAK · Escuela del descanso](https://loak-escuela-descanso.acousticthistle2.chatgpt.site/#aprende).
+
+La publicación de Sites es privada para el propietario y es independiente del alojamiento de Netlify. Cambiar el repositorio no actualiza automáticamente esa publicación.
 
 ## Desplegar en Netlify
 

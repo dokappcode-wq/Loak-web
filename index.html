@@ -602,6 +602,7 @@ html.locked, html.locked body { overflow: hidden; }
 }
 </style>
 <link rel="stylesheet" href="./aprende.css">
+<script src="./aprende-theory.js" defer></script>
 <script src="./aprende-model.js" defer></script>
 <script src="./aprende.js" defer></script>
 </head>
@@ -796,7 +797,7 @@ html.locked, html.locked body { overflow: hidden; }
           <p class="learn-eyebrow"><span class="learn-tiny-moon" aria-hidden="true">☾</span> LA ESCUELA DEL DESCANSO</p>
           <h1>Tu descanso,<br>un pequeño paso<br><em>cada día.</em></h1>
           <p>Conoce tu sueño. Cuida tus hábitos. Aprende a descansar con lecciones cortas y sin presión.</p>
-          <div class="learn-hero-meta"><span>6 lecciones</span><span>3–4 minutos cada una</span><span>A tu ritmo</span></div>
+          <div class="learn-hero-meta"><span>6 lecciones</span><span>Teoría + práctica</span><span>A tu ritmo</span></div>
         </div>
         <div class="learn-hero-art" aria-hidden="true">
           <svg viewBox="0 0 360 310" focusable="false">
@@ -814,6 +815,13 @@ html.locked, html.locked body { overflow: hidden; }
         </div>
       </header>
       <div id="learn-stats" class="learn-stats" aria-label="Tu progreso de aprendizaje"></div>
+      <nav class="learn-tabs" aria-label="Secciones de la escuela">
+        <button data-panel="journey" aria-pressed="true" aria-controls="learn-panel-journey">Mi camino <span aria-hidden="true">↗</span></button>
+        <button data-panel="library" aria-pressed="false" aria-controls="learn-panel-library">Teoría <span id="learn-library-count">18 ideas</span></button>
+        <button data-panel="glossary" aria-pressed="false" aria-controls="learn-panel-glossary">Conceptos</button>
+      </nav>
+      <section id="learn-panel-journey" aria-label="Tu camino de aprendizaje">
+      <div class="learn-method"><span><b>01</b> Comprende la idea</span><span aria-hidden="true">→</span><span><b>02</b> Ponla en práctica</span><span aria-hidden="true">→</span><span><b>03</b> Elige tu pequeño paso</span></div>
       <div class="learn-layout">
         <section class="learn-journey" aria-labelledby="learn-path-title">
           <div class="learn-section-head"><div><p class="learn-eyebrow">PASO A PASO</p><h2 id="learn-path-title">Tu camino del sueño</h2></div><span id="learn-percent" class="learn-percent"></span></div>
@@ -840,9 +848,18 @@ html.locked, html.locked body { overflow: hidden; }
           <section class="learn-plans"><p class="learn-eyebrow">DE LA IDEA AL HÁBITO</p><h2>Mis pequeños pasos</h2><div id="learn-plans"></div></section>
         </aside>
       </div>
+      </section>
+      <section id="learn-panel-library" class="learn-library" aria-labelledby="learn-library-title" hidden>
+        <div class="learn-library-heading"><div><p class="learn-eyebrow">ENTENDER PARA CUIDARTE</p><h2 id="learn-library-title" tabindex="-1">Las ideas detrás de tus hábitos.</h2><p>Lee a tu ritmo, guarda lo que te sirva y vuelve cuando lo necesites. La teoría está abierta para todos, sin desbloqueos.</p></div><span id="learn-reading-count" class="learn-reading-count"></span></div>
+        <div class="learn-library-tools"><label class="learn-search">Buscar en la biblioteca<input id="learn-search" type="search" placeholder="Prueba «cafeína», «fases» o «luz»" maxlength="120" autocomplete="off"></label><div class="learn-library-filters" role="group" aria-label="Filtrar las ideas"><button data-filter="all" aria-pressed="true">Todas</button><button data-filter="saved" aria-pressed="false">Guardadas <span id="learn-saved-count">0</span></button></div></div>
+        <p id="learn-search-status" class="learn-fine" role="status"></p>
+        <div id="learn-library-grid" class="learn-library-grid"></div>
+        <div class="learn-sources"><h3>Para seguir leyendo</h3><p>Texto educativo de LOAK, basado en estas fuentes de salud. Las referencias originales están en inglés.</p><div id="learn-sources"></div></div>
+      </section>
+      <section id="learn-panel-glossary" class="learn-glossary" aria-labelledby="learn-glossary-title" hidden><p class="learn-eyebrow">SIN PALABRAS COMPLICADAS</p><h2 id="learn-glossary-title" tabindex="-1">El sueño, en pocas palabras.</h2><p>Ocho conceptos que encontrarás a lo largo del camino.</p><div id="learn-glossary-list"></div></section>
       <section class="learn-bottom" aria-label="Sobre el aprendizaje">
         <p><strong>Aprender, sin competir.</strong> Los puntos reconocen lo que aprendes, no cómo duermes. Puedes repasar sin perder vidas ni puntos.</p>
-        <details><summary>Sobre el contenido y tu privacidad</summary><p>Contenido educativo para adultos. No sustituye una valoración sanitaria. Si las dificultades persisten, tienes mucha somnolencia o pausas respiratorias nocturnas, consulta con un profesional.</p><p>Tu progreso y los pasos que elijas se guardan solo en este navegador, sin crear una cuenta. No se envían a LOAK ni se sincronizan entre dispositivos. Al borrar los datos del navegador, también se borrará este progreso.</p><p>Referencias: <a href="https://www.nhlbi.nih.gov/health/sleep-deprivation/healthy-sleep-habits" target="_blank" rel="noopener">NHLBI: hábitos de sueño</a>, <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener">CDC: el sueño</a> y <a href="https://www.nhs.uk/conditions/insomnia/" target="_blank" rel="noopener">NHS: insomnio</a>.</p><button id="learn-reset" class="learn-text-button">Borrar mi progreso de aprendizaje</button><div id="learn-reset-confirm" class="learn-reset-confirm" hidden><p>Se borrarán tus lecciones, puntos, racha y pequeños pasos guardados en este navegador.</p><button class="learn-secondary" id="learn-reset-cancel">Conservar mi progreso</button><button class="learn-text-button" id="learn-reset-yes">Sí, borrar mi progreso</button></div></details>
+        <details><summary>Sobre el contenido y tu privacidad</summary><p>Contenido educativo para adultos. No sustituye una valoración sanitaria. Si las dificultades persisten, tienes mucha somnolencia o pausas respiratorias nocturnas, consulta con un profesional.</p><p>Tu progreso, las ideas que marques como leídas o guardadas y los pasos que elijas se guardan solo en este navegador, sin crear una cuenta. No se envían a LOAK ni se sincronizan entre dispositivos. Al borrar los datos del navegador, también se borrará este progreso.</p><p>Referencias: <a href="https://www.nhlbi.nih.gov/health/sleep-deprivation/healthy-sleep-habits" target="_blank" rel="noopener">NHLBI: hábitos de sueño</a>, <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener">CDC: el sueño</a> y <a href="https://www.nhs.uk/conditions/insomnia/" target="_blank" rel="noopener">NHS: insomnio</a>.</p><button id="learn-reset" class="learn-text-button">Borrar mi progreso de aprendizaje</button><div id="learn-reset-confirm" class="learn-reset-confirm" hidden><p>Se borrarán tus lecciones, puntos, racha, lecturas, ideas guardadas y pequeños pasos guardados en este navegador.</p><button class="learn-secondary" id="learn-reset-cancel">Conservar mi progreso</button><button class="learn-text-button" id="learn-reset-yes">Sí, borrar mi progreso</button></div></details>
       </section>
       <noscript><p class="learn-storage-note">Activa JavaScript para hacer los ejercicios. También puedes consultar nuestros <a href="#servicios">talleres de sueño</a>.</p></noscript>
     </div>
@@ -916,7 +933,7 @@ html.locked, html.locked body { overflow: hidden; }
       <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad de tus datos, y retirar tu consentimiento cuando quieras, escribiendo a <a href="mailto:loak.salud@gmail.com">loak.salud@gmail.com</a>. Si crees que no los hemos tratado bien, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>).</p>
 
       <h3 id="cookies">8. Cookies y almacenamiento local</h3>
-      <p>No utilizamos cookies de análisis ni de publicidad. El apartado «Aprende a dormir» guarda en tu navegador las lecciones, respuestas comprobadas, puntos, días de práctica y hábitos que elijas, mediante almacenamiento local. Estos datos no se envían a LOAK ni se sincronizan entre dispositivos. Puedes borrarlos desde «Sobre el contenido y tu privacidad» dentro del apartado, o al borrar los datos del navegador.</p>
+      <p>No utilizamos cookies de análisis ni de publicidad. El apartado «Aprende a dormir» guarda en tu navegador las lecciones, respuestas comprobadas, puntos, días de práctica, lecturas, ideas guardadas y hábitos que elijas, mediante almacenamiento local. Estos datos no se envían a LOAK ni se sincronizan entre dispositivos. Puedes borrarlos desde «Sobre el contenido y tu privacidad» dentro del apartado, o al borrar los datos del navegador.</p>
 
       <h3>9. Créditos de las imágenes</h3>
       <p>Fotografías de <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>, bajo licencia Unsplash: <a href="https://unsplash.com/photos/milky-way-over-mountain-landscape-at-night-L95xDkSSuWw" target="_blank" rel="noopener">Nathan Anderson</a>, <a href="https://unsplash.com/photos/white-bed-linen-near-window-Uxtsu5i_msE" target="_blank" rel="noopener">Sarah Brown</a> y <a href="https://unsplash.com/photos/sunrise-over-a-misty-forest-and-field-dVjhUni3PXA" target="_blank" rel="noopener">Lutz Stallknecht</a>.</p>

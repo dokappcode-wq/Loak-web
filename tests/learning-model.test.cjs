@@ -104,3 +104,43 @@ test('after finishing the path, the daily action resumes an unfinished review', 
   M.start(s, 'mitos'); M.advance(s, 'mitos');
   assert.equal(M.nextLesson(s).id, 'mitos');
 });
+
+test('all 18 theory ideas have examples, takeaways and existing health references', () => {
+  assert.equal(M.topics.length, 18);
+  assert.equal(new Set(M.topics.map(topic => topic.id)).size, 18);
+  assert.equal(M.glossary.length, 8);
+  for (const lesson of M.lessons) {
+    assert.equal(lesson.theory.length, 3);
+    for (const topic of lesson.theory) {
+      assert.ok(topic.paragraphs.length >= 2); assert.ok(topic.example.length > 30); assert.ok(topic.remember.length > 15);
+      for (const id of topic.sources) assert.match(M.sources[id].url, /^https:\/\//);
+    }
+  }
+});
+test('reading and saving ideas are idempotent and never award points or unlock quizzes', () => {
+  const s = M.blank();
+  assert.ok(M.readTopic(s, 'fases')); assert.ok(M.readTopic(s, 'fases'));
+  assert.deepEqual(s.readTheory, ['fases']);
+  assert.ok(M.bookmark(s, 'fases')); assert.deepEqual(s.bookmarks, ['fases']);
+  assert.ok(M.bookmark(s, 'fases')); assert.deepEqual(s.bookmarks, []);
+  assert.equal(M.bookmark(s, 'unknown'), false); assert.equal(M.readTopic(s, 'unknown'), false);
+  assert.equal(s.completed.length, 0); assert.equal(s.days.length, 0); assert.equal(M.unlocked(s, 'mitos'), false);
+});
+test('the upgrade preserves v2 completions, pending answers and habits without forcing theory', () => {
+  const s = M.blank(); finish(s, M.lessons[0]); M.start(s, 'refugio'); M.advance(s, 'refugio');
+  M.submit(s, 'refugio', [0, 1]);
+  const legacy = JSON.parse(JSON.stringify(s)); delete legacy.readTheory; delete legacy.bookmarks;
+  delete legacy.sessions.refugio.theoryIndex;
+  const restored = M.normalize(legacy);
+  assert.deepEqual(restored.completed, ['reloj']); assert.equal(restored.plans.reloj, 0);
+  assert.equal(restored.sessions.refugio.phase, 'question'); assert.equal(restored.sessions.refugio.feedback.correct, false);
+  assert.equal(restored.sessions.refugio.theoryIndex, 0); assert.deepEqual(restored.readTheory, []);
+});
+test('reading state is normalized, preserving a valid page and discarding unknown IDs', () => {
+  const s = M.blank(); M.start(s, 'reloj'); s.sessions.reloj.theoryIndex = 2;
+  s.readTheory = ['fases', 'fases', 'wrong']; s.bookmarks = ['entorno', null];
+  const restored = M.normalize(s);
+  assert.deepEqual(restored.readTheory, ['fases']); assert.deepEqual(restored.bookmarks, ['entorno']);
+  assert.equal(restored.sessions.reloj.theoryIndex, 2);
+  s.sessions.reloj.theoryIndex = -1; assert.equal(M.normalize(s).sessions.reloj.theoryIndex, 0);
+});

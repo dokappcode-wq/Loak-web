@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "LOAK Sleep Wellness y escuela interactiva del descanso",
-  "scripts": { "test": "node --test tests/*.test.cjs", "check": "node --check aprende.js && node --check aprende-model.js" },
+  "scripts": { "test": "node --test tests/*.test.cjs", "check": "node --check aprende-theory.js && node --check aprende.js && node --check aprende-model.js" },
   "devDependencies": { "jsdom": "26.1.0" }
 }

@@ -19,7 +19,7 @@
   };
   const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${icons[name] || icons.moon}</svg>`;
   const esc = value => String(value).replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
-  let state = M.blank(), storageAvailable = true, activeId = null, selection = null, celebration = null;
+  let state = M.blank(), storageAvailable = true, activeId = null, selection = null, celebration = null, activePanel = 'journey', libraryFilter = 'all', readerId = null;
   try {
     const raw = localStorage.getItem(M.KEY);
     if (raw) state = M.normalize(JSON.parse(raw));
@@ -40,6 +40,52 @@
     target.focus({preventScroll: true});
     if (scroll) target.scrollIntoView({behavior: motion(), block: 'start'});
   }
+  function topicSources(topic) {
+    return `<ul class="learn-source-links">${topic.sources.map(id => `<li><a href="${M.sources[id].url}" target="_blank" rel="noopener">${esc(M.sources[id].title)} <span aria-hidden="true">↗</span></a></li>`).join('')}</ul>`;
+  }
+  function bookmarkButton(topic) {
+    const saved = state.bookmarks.includes(topic.id);
+    return `<button class="learn-bookmark" data-bookmark="${topic.id}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '★' : '☆'}</span> ${saved ? 'Idea guardada' : 'Guardar idea'}</button>`;
+  }
+  function topicBody(topic) {
+    return `<div class="learn-theory-body">${topic.paragraphs.map(paragraph => `<p>${esc(paragraph)}</p>`).join('')}${topic.concepts ? `<div class="learn-concept-grid">${topic.concepts.map(concept => `<div><strong>${esc(concept.label)}</strong><p>${esc(concept.text)}</p></div>`).join('')}</div>` : ''}<aside class="learn-example"><span class="learn-eyebrow">UN EJEMPLO EN TU DÍA</span><p>${esc(topic.example)}</p></aside><div class="learn-takeaway">${icon('spark')}<p><strong>La idea que te llevas</strong><br>${esc(topic.remember)}</p></div><details class="learn-topic-sources"><summary>Fuentes para ampliar</summary>${topicSources(topic)}</details></div>`;
+  }
+  function renderLibrary() {
+    const query = $('learn-search').value.trim();
+    const plain = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const results = M.topics.filter(topic => (libraryFilter === 'all' || state.bookmarks.includes(topic.id)) && plain([topic.title, topic.lessonTitle, ...topic.paragraphs, topic.example, topic.remember].join(' ')).includes(plain(query)));
+    $('learn-library-grid').innerHTML = results.length ? results.map(topic => `<article class="learn-topic-card"><div class="learn-topic-card-top"><span class="learn-eyebrow">${esc(topic.lessonTitle)}</span>${state.readTheory.includes(topic.id) ? '<span class="learn-read-label">✓ Leída</span>' : ''}</div><h3>${esc(topic.title)}</h3><p>${esc(topic.remember)}</p><div class="learn-topic-actions"><button class="learn-read-button" data-open-topic="${topic.id}">Leer la idea <span aria-hidden="true">↗</span></button>${bookmarkButton(topic)}</div></article>`).join('') : `<div class="learn-empty">${icon('book')}<h3>${libraryFilter === 'saved' && !query ? 'Tu biblioteca personal empieza aquí.' : 'No hemos encontrado esa idea.'}</h3><p>${libraryFilter === 'saved' && !query ? 'Pulsa «Guardar idea» en cualquier lectura para encontrarla en este lugar.' : 'Prueba con una palabra como «luz», «café» o «descanso», o cambia el filtro.'}</p><button class="learn-secondary" data-clear-search>Ver todas las ideas</button></div>`;
+    $('learn-search-status').textContent = `${results.length} ${results.length === 1 ? 'idea disponible' : 'ideas disponibles'}${libraryFilter === 'saved' ? ' en tus guardadas' : ''}.`;
+    $('learn-saved-count').textContent = state.bookmarks.length;
+    $('learn-reading-count').textContent = `${state.readTheory.length} / ${M.topics.length} ideas leídas`;
+    $('learn-library-count').textContent = `${M.topics.length} ideas`;
+    document.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === libraryFilter)));
+  }
+  function renderReferencePages() {
+    $('learn-glossary-list').innerHTML = M.glossary.map(entry => `<details><summary>${esc(entry.term)}</summary><p>${esc(entry.text)}</p><a href="${M.sources[entry.source].url}" target="_blank" rel="noopener">${esc(M.sources[entry.source].title)} ↗</a></details>`).join('');
+    $('learn-sources').innerHTML = Object.values(M.sources).map(source => `<a href="${source.url}" target="_blank" rel="noopener">${esc(source.title)} <span aria-hidden="true">↗</span></a>`).join('');
+  }
+  function switchPanel(panel, withFocus = true) {
+    if (!['journey', 'library', 'glossary'].includes(panel)) return;
+    activePanel = panel; pauseBreathing(); showDashboard();
+    for (const name of ['journey', 'library', 'glossary']) $(`learn-panel-${name}`).hidden = name !== panel;
+    document.querySelectorAll('[data-panel]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.panel === panel)));
+    if (withFocus) {
+      const id = panel === 'journey' ? 'learn-path-title' : `learn-${panel}-title`;
+      $(id).tabIndex = -1; focus(id, true);
+    }
+  }
+  function openReader(id) {
+    const topic = M.topics.find(topic => topic.id === id);
+    if (!topic) return;
+    readerId = id; activeId = null; celebration = null; pauseBreathing();
+    const lesson = M.lessons.find(lesson => lesson.id === topic.lessonId);
+    const index = lesson.theory.findIndex(item => item.id === id);
+    $('learn-dashboard').hidden = true; $('learn-player').hidden = false;
+    $('learn-player').innerHTML = `<div class="learn-reader-head"><button class="learn-exit" data-action="reader-exit">← Volver a la biblioteca</button><span>${index + 1} / ${lesson.theory.length} ideas de esta lección</span></div><article class="learn-player-card"><p class="learn-eyebrow">${esc(lesson.title)} · ${esc(topic.tag)}</p><h2 id="learn-title" tabindex="-1">${esc(topic.title)}</h2>${bookmarkButton(topic)}${topicBody(topic)}<div class="learn-reader-footer"><button class="learn-primary" data-action="read-next">${index < lesson.theory.length - 1 ? 'Marcar leída y seguir' : 'Marcar leída y volver'} →</button>${M.unlocked(state, lesson.id) ? `<button class="learn-text-button" data-start="${lesson.id}">${state.sessions[lesson.id] ? 'Retomar esta lección' : 'Practicar esta lección'}</button>` : '<button class="learn-text-button" data-panel="journey">Ver el camino de práctica</button>'}</div></article>`;
+    focus('learn-title', true);
+  }
+  function markTheory(lesson, session) { M.readTopic(state, lesson.theory[session.theoryIndex || 0].id); }
   function dashboard() {
     const count = state.completed.length, next = M.nextLesson(state), todayDone = state.days.includes(M.dayKey());
     const stats = [
@@ -54,7 +100,7 @@
     $('learn-path').innerHTML = units.map((unit, unitIndex) => `<section class="learn-unit" aria-labelledby="learn-unit-${unitIndex}"><h3 class="learn-unit-heading" id="learn-unit-${unitIndex}"><span>0${unitIndex + 1}</span> ${esc(unit)}</h3><ol class="learn-nodes" start="${unitIndex * 2 + 1}">${M.lessons.filter(l => l.unit === unit).map(lesson => {
       const done = state.completed.includes(lesson.id), available = M.unlocked(state, lesson.id), pending = Boolean(state.sessions[lesson.id]);
       const current = !done && available;
-      return `<li class="learn-node ${done ? 'is-done' : current ? 'is-current' : 'is-locked'}"><button class="learn-lesson" data-start="${lesson.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''}><span class="learn-node-circle">${icon(done ? 'check' : available ? lesson.icon : 'lock')}</span><span class="learn-node-copy">${current ? '<span class="learn-node-badge">Tu siguiente paso</span>' : ''}<strong>${esc(lesson.title)}</strong><small>${done ? pending ? 'Repaso en curso · Continuar' : 'Completada · Volver a practicar' : available ? pending ? 'Lección en curso · Continuar' : `${lesson.minutes} min · 4 ejercicios · +50 puntos` : 'Completa la lección anterior'}</small></span>${available ? '<span class="learn-node-arrow" aria-hidden="true">↗</span>' : ''}</button></li>`;
+      return `<li class="learn-node ${done ? 'is-done' : current ? 'is-current' : 'is-locked'}"><button class="learn-lesson" data-start="${lesson.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''}><span class="learn-node-circle">${icon(done ? 'check' : available ? lesson.icon : 'lock')}</span><span class="learn-node-copy">${current ? '<span class="learn-node-badge">Tu siguiente paso</span>' : ''}<strong>${esc(lesson.title)}</strong><small>${done ? pending ? 'Repaso en curso · Continuar' : 'Completada · Volver a practicar' : available ? pending ? 'Lección en curso · Continuar' : `${lesson.minutes} min · Teoría + 4 ejercicios · +50 puntos` : 'Completa la lección anterior'}</small></span>${available ? '<span class="learn-node-arrow" aria-hidden="true">↗</span>' : ''}</button></li>`;
     }).join('')}</ol></section>`).join('');
     $('learn-path-finish').innerHTML = `${icon(count === M.lessons.length ? 'check' : 'flag')}<p><strong>${count === M.lessons.length ? 'El camino está completo. El aprendizaje sigue.' : 'Un descanso más consciente empieza aquí.'}</strong>${count === M.lessons.length ? 'Vuelve a cualquier lección cuando te apetezca repasar.' : 'Sin prisa, sin vidas que perder. Una idea a la vez.'}</p>`;
     const title = todayDone ? 'Tu paso de hoy, dado.' : count ? 'Un ratito para ti.' : 'Hoy empieza tu camino.';
@@ -62,19 +108,24 @@
     $('learn-daily').innerHTML = `<div class="learn-goal-mark"><p class="learn-eyebrow">TU OBJETIVO DE HOY</p><span class="learn-goal-ring ${todayDone ? 'is-met' : ''}" aria-label="${todayDone ? 'Objetivo completado' : 'Objetivo pendiente'}">${todayDone ? icon('check') : '1'}</span></div><h2>${title}</h2><p>${body}</p><button class="learn-primary" data-start="${next.id}">${state.sessions[next.id] ? 'Continuar mi lección' : count === M.lessons.length ? 'Volver a practicar' : count ? 'Seguir mi camino' : 'Empezar mi camino'} <span aria-hidden="true">→</span></button>`;
     const plans = M.lessons.filter(l => Number.isInteger(state.plans[l.id]));
     $('learn-plans').innerHTML = plans.length ? `<ul>${plans.map(l => `<li>${esc(l.plans[state.plans[l.id]])}</li>`).join('')}</ul>` : '<p>Al terminar una lección, elige una acción sencilla. Aquí irá creciendo tu propia rutina.</p>';
+    renderLibrary();
     if (!storageAvailable) showStorage('Este navegador no permite guardar el progreso. Puedes hacer los ejercicios, pero se perderá al cerrar o recargar la página.');
   }
   function header(lesson, session, full = false) {
     let mastered = lesson.questions.length - new Set(session?.queue || []).size;
     if (session?.feedback?.correct && session.queue.filter(id => id === session.queue[0]).length === 1) mastered++;
     if (full) mastered = lesson.questions.length;
-    return `<div class="learn-player-head"><button class="learn-exit" data-action="exit">${icon('close')} Guardar y salir</button><div class="learn-progress-group"><small>${esc(lesson.title)} · ${mastered} de ${lesson.questions.length} ideas</small><progress value="${mastered}" max="${lesson.questions.length}" aria-label="Ideas aprendidas en esta lección"></progress></div></div>`;
+    return `<nav class="learn-phase-nav" aria-label="Etapas de la lección"><span ${session?.phase === 'intro' ? 'aria-current="step"' : ''}>01 Comprende</span><span ${session?.phase === 'question' ? 'aria-current="step"' : ''}>02 Practica</span><span ${session?.phase === 'practice' ? 'aria-current="step"' : ''}>03 Tu hábito</span></nav><div class="learn-player-head"><button class="learn-exit" data-action="exit">${icon('close')} Guardar y salir</button><div class="learn-progress-group"><small>${esc(lesson.title)} · ${mastered} de ${lesson.questions.length} ideas</small><progress value="${mastered}" max="${lesson.questions.length}" aria-label="Ideas aprendidas en esta lección"></progress></div></div>`;
   }
   function footer(label, action, disabled = false, note = 'Sin perder puntos. Puedes tomarte tu tiempo.') {
     return `<div class="learn-player-footer"><p>${note}</p><button class="learn-primary" data-action="${action}" ${disabled ? 'disabled' : ''}>${label} <span aria-hidden="true">→</span></button></div>`;
   }
   function intro(lesson, session) {
-    return `${header(lesson, session)}<div class="learn-player-card"><div class="learn-lesson-emblem">${icon(lesson.icon)}</div><p class="learn-eyebrow">${esc(lesson.unit)} · ${lesson.minutes} MINUTOS</p><h2 id="learn-title" tabindex="-1">${esc(lesson.title)}</h2><p>${esc(lesson.intro)}</p><div class="learn-takeaway">${icon('spark')}<p><strong>Quédate con esta idea</strong><br>${esc(lesson.takeaway)}</p></div>${footer('Vamos allá', 'advance', false, '4 ejercicios y un pequeño paso para tu día.')}</div>`;
+    const index = session.theoryIndex || 0, topic = lesson.theory[index];
+    return `${header(lesson, session)}<article class="learn-player-card"><div class="learn-theory-top"><p class="learn-eyebrow">COMPRENDER · IDEA ${index + 1} DE ${lesson.theory.length}</p>${bookmarkButton(topic)}</div><nav class="learn-theory-nav" aria-label="Ideas de esta lección">${lesson.theory.map((item, i) => `<button data-theory-index="${i}" ${i === index ? 'aria-current="step"' : ''} aria-label="Idea ${i + 1}: ${esc(item.title)}">${state.readTheory.includes(item.id) ? '✓' : String(i + 1).padStart(2, '0')}</button>`).join('')}</nav><h2 id="learn-title" tabindex="-1">${esc(topic.title)}</h2>${topicBody(topic)}<div class="learn-theory-footer"><button class="learn-text-button" data-action="theory-prev" ${index === 0 ? 'disabled' : ''}>← Idea anterior</button><button class="learn-primary" data-action="${index < lesson.theory.length - 1 ? 'theory-next' : 'advance'}">${index < lesson.theory.length - 1 ? 'Siguiente idea' : 'Ponerlo en práctica'} →</button></div><button class="learn-skip" data-action="advance" data-skip>Ya conozco la teoría: ir a los ejercicios</button></article>`;
+  }
+  function inlineTheory(lesson) {
+    return `<details class="learn-reference"><summary>${icon('book')} Consultar la teoría de esta lección</summary><p class="learn-fine">Puedes leer sin perder la respuesta que has elegido.</p>${lesson.theory.map(topic => `<details class="learn-inline-topic"><summary>${esc(topic.title)}</summary>${topicBody(topic)}${bookmarkButton(topic)}</details>`).join('')}</details>`;
   }
   function answerText(question) {
     if (question.type === 'choice') return question.options[question.answer];
@@ -93,7 +144,7 @@
     const q = lesson.questions.find(item => item.id === session.queue[0]);
     const feedback = session.feedback;
     if (!keepSelection) selection = feedback ? feedback.answer : q.type === 'choice' ? null : q.type === 'multi' ? [] : q.items.map((_, i) => i);
-    return `${header(lesson, session)}<div class="learn-player-card"><p class="learn-eyebrow">${esc(q.label || (q.type === 'order' ? 'PONLO EN ORDEN' : q.type === 'multi' ? 'ELIGE VARIAS RESPUESTAS' : 'ELIGE UNA RESPUESTA'))}</p><h2 id="learn-title" tabindex="-1">${esc(q.prompt)}</h2>${q.hint ? `<p class="learn-question-hint" id="learn-question-hint">${esc(q.hint)}</p>` : ''}${options(q, feedback)}${feedback ? `<section class="learn-feedback" role="status"><h3 id="learn-feedback-title" tabindex="-1">${icon(feedback.correct ? 'check' : 'book')}${feedback.correct ? 'Una idea más para ti.' : 'No pasa nada. Vamos a entenderlo.'}</h3>${feedback.correct ? '' : `<p class="learn-correction">${q.type === 'order' ? 'El orden propuesto' : 'La respuesta'}: ${esc(answerText(q))}.</p>`}<p>${esc(q.why)}</p>${feedback.correct ? '' : '<p class="learn-review-note">Volverás a practicar esta idea antes de terminar.</p>'}</section>` : ''}${footer(feedback ? 'Continuar' : 'Comprobar', feedback ? 'advance' : 'check', !feedback && !canCheck(q))}</div>`;
+    return `${header(lesson, session)}<div class="learn-player-card"><p class="learn-eyebrow">${esc(q.label || (q.type === 'order' ? 'PONLO EN ORDEN' : q.type === 'multi' ? 'ELIGE VARIAS RESPUESTAS' : 'ELIGE UNA RESPUESTA'))}</p><h2 id="learn-title" tabindex="-1">${esc(q.prompt)}</h2>${q.hint ? `<p class="learn-question-hint" id="learn-question-hint">${esc(q.hint)}</p>` : ''}${options(q, feedback)}${inlineTheory(lesson)}${feedback ? `<section class="learn-feedback" role="status"><h3 id="learn-feedback-title" tabindex="-1">${icon(feedback.correct ? 'check' : 'book')}${feedback.correct ? 'Una idea más para ti.' : 'No pasa nada. Vamos a entenderlo.'}</h3>${feedback.correct ? '' : `<p class="learn-correction">${q.type === 'order' ? 'El orden propuesto' : 'La respuesta'}: ${esc(answerText(q))}.</p>`}<p>${esc(q.why)}</p>${feedback.correct ? '' : '<p class="learn-review-note">Volverás a practicar esta idea antes de terminar.</p>'}</section>` : ''}${footer(feedback ? 'Continuar' : 'Comprobar', feedback ? 'advance' : 'check', !feedback && !canCheck(q))}</div>`;
   }
   function practice(lesson, session) {
     selection = Number.isInteger(state.plans[lesson.id]) ? state.plans[lesson.id] : null;
@@ -101,7 +152,7 @@
   }
   function completedView(lesson, result) {
     const index = M.lessons.indexOf(lesson), next = M.lessons[index + 1];
-    return `<div class="learn-player-card learn-complete"><div class="learn-lesson-emblem">${icon('check')}</div><p class="learn-eyebrow">${result.fresh ? 'LECCIÓN COMPLETADA' : 'REPASO COMPLETADO'}</p><h2 id="learn-title" tabindex="-1">Un pequeño paso.<br>Una nueva idea.</h2><p>${result.fresh ? 'Lo aprendido se queda contigo. Sigue a tu ritmo.' : 'Volver a una idea también es avanzar. Tu práctica de hoy queda registrada.'}</p><div class="learn-reward">${icon(result.fresh ? 'spark' : 'book')}${result.fresh ? '+50 puntos de aprendizaje' : 'Ideas repasadas · Sin puntos duplicados'}</div><div class="learn-takeaway">${icon('leaf')}<p><strong>Mi pequeño paso</strong><br>${esc(result.plan)}</p></div><p class="learn-fine">Tus puntos reconocen el aprendizaje. No miden la calidad de tu sueño.</p><div class="learn-complete-actions">${next ? `<button class="learn-primary" data-start="${next.id}">Siguiente lección <span aria-hidden="true">→</span></button>` : ''}<button class="learn-secondary" data-action="exit">Volver a mi camino</button></div></div>`;
+    return `<div class="learn-player-card learn-complete"><div class="learn-lesson-emblem">${icon('check')}</div><p class="learn-eyebrow">${result.fresh ? 'LECCIÓN COMPLETADA' : 'REPASO COMPLETADO'}</p><h2 id="learn-title" tabindex="-1">Un pequeño paso.<br>Una nueva idea.</h2><p>${result.fresh ? 'Lo aprendido se queda contigo. Sigue a tu ritmo.' : 'Volver a una idea también es avanzar. Tu práctica de hoy queda registrada.'}</p><div class="learn-reward">${icon(result.fresh ? 'spark' : 'book')}${result.fresh ? '+50 puntos de aprendizaje' : 'Ideas repasadas · Sin puntos duplicados'}</div><div class="learn-takeaway">${icon('leaf')}<p><strong>Mi pequeño paso</strong><br>${esc(result.plan)}</p></div><p class="learn-fine">Tus puntos reconocen el aprendizaje. No miden la calidad de tu sueño.</p><div class="learn-summary"><h3>Tres ideas que se quedan contigo</h3><ul>${lesson.theory.map(topic => `<li>${esc(topic.remember)}</li>`).join('')}</ul></div><div class="learn-complete-actions">${next ? `<button class="learn-primary" data-start="${next.id}">Siguiente lección <span aria-hidden="true">→</span></button>` : ''}<button class="learn-secondary" data-action="exit">Volver a mi camino</button></div></div>`;
   }
   function renderActive(keepSelection = false) {
     const lesson = M.lessons.find(l => l.id === activeId);
@@ -113,24 +164,60 @@
     $('learn-player').innerHTML = session.phase === 'intro' ? intro(lesson, session) : session.phase === 'practice' ? practice(lesson, session) : questionView(lesson, session, keepSelection);
   }
   function showDashboard(withFocus = false) {
-    activeId = null; celebration = null; selection = null;
+    activeId = null; celebration = null; selection = null; readerId = null;
     $('learn-dashboard').hidden = false; $('learn-player').hidden = true; dashboard();
     if (withFocus) { $('learn-path-title').tabIndex = -1; focus('learn-path-title', true); }
   }
   function openLesson(id) {
     if (!M.start(state, id)) return;
-    pauseBreathing(); activeId = id; celebration = null; save(); renderActive(); focus('learn-title');
+    pauseBreathing(); readerId = null; activeId = id; celebration = null; save(); renderActive(); focus('learn-title');
     $('learn-player').scrollIntoView({behavior: motion(), block: 'start'});
   }
   function canCheck(q) {
     return q.type === 'choice' ? Number.isInteger(selection) : q.type === 'multi' ? selection.length === q.answer.length : true;
   }
   $('v-aprende').addEventListener('click', event => {
+    const panel = event.target.closest('[data-panel]');
+    if (panel) {switchPanel(panel.dataset.panel); return;}
+    const filter = event.target.closest('[data-filter]');
+    if (filter) {libraryFilter = filter.dataset.filter; renderLibrary(); return;}
+    if (event.target.closest('[data-clear-search]')) {libraryFilter = 'all'; $('learn-search').value = ''; renderLibrary(); focus('learn-search'); return;}
+    const read = event.target.closest('[data-open-topic]');
+    if (read) {openReader(read.dataset.openTopic); return;}
+    const bookmark = event.target.closest('[data-bookmark]');
+    if (bookmark) {
+      const id = bookmark.dataset.bookmark;
+      if (!M.bookmark(state, id)) return;
+      save(); renderLibrary();
+      const saved = state.bookmarks.includes(id);
+      document.querySelectorAll(`[data-bookmark="${id}"]`).forEach(button => {button.setAttribute('aria-pressed', String(saved)); button.innerHTML = `<span aria-hidden="true">${saved ? '★' : '☆'}</span> ${saved ? 'Idea guardada' : 'Guardar idea'}`;});
+      if (!bookmark.isConnected) {
+        const target = document.querySelector(`[data-bookmark="${id}"]`) || $('learn-panel-library').querySelector('[data-clear-search]') || $('learn-search');
+        target?.focus({preventScroll: true});
+      }
+      announce(saved ? 'Idea guardada en tu biblioteca.' : 'Idea retirada de tus guardadas.'); return;
+    }
     const start = event.target.closest('[data-start]');
     if (start && !start.disabled) {openLesson(start.dataset.start); return;}
     const action = event.target.closest('[data-action]')?.dataset.action;
-    if (action === 'exit') {showDashboard(true); return;}
+    if (action === 'reader-exit') {switchPanel('library'); return;}
+    if (action === 'read-next' && readerId) {
+      const topic = M.topics.find(topic => topic.id === readerId), lesson = M.lessons.find(lesson => lesson.id === topic.lessonId);
+      M.readTopic(state, readerId); save();
+      const next = lesson.theory[lesson.theory.findIndex(item => item.id === readerId) + 1];
+      if (next) openReader(next.id); else switchPanel('library');
+      return;
+    }
+    if (action === 'exit') {switchPanel('journey'); return;}
     if (!activeId || celebration) return;
+    const session = state.sessions[activeId], lesson = M.lessons.find(l => l.id === activeId);
+    const theoryIndex = event.target.closest('[data-theory-index]');
+    if (session?.phase === 'intro' && (theoryIndex || action === 'theory-prev' || action === 'theory-next')) {
+      if (action === 'theory-next') markTheory(lesson, session);
+      const index = theoryIndex ? Number(theoryIndex.dataset.theoryIndex) : session.theoryIndex + (action === 'theory-prev' ? -1 : 1);
+      if (!Number.isInteger(index) || index < 0 || index >= lesson.theory.length) return;
+      session.theoryIndex = index; save(); renderActive(); focus('learn-title', true); return;
+    }
     const move = event.target.closest('[data-move]');
     if (move && !move.disabled) {
       const session = state.sessions[activeId];
@@ -145,6 +232,7 @@
       announce(`Paso movido a la posición ${to + 1}.`);
     }
     if (action === 'check' && M.submit(state, activeId, selection)) {save(); renderActive(); focus('learn-feedback-title');}
+    if (action === 'advance' && session?.phase === 'intro' && !event.target.closest('[data-skip]')) markTheory(lesson, session);
     if (action === 'advance' && M.advance(state, activeId)) {save(); renderActive(); focus('learn-title', true);}
     if (action === 'complete') {
       const result = M.complete(state, activeId, selection);
@@ -164,6 +252,7 @@
       $('learn-player').querySelector('[data-action="check"]').disabled = !canCheck(q);
     }
   });
+  $('learn-search').addEventListener('input', renderLibrary);
   $('learn-reset').onclick = () => { $('learn-reset-confirm').hidden = false; focus('learn-reset-cancel'); };
   $('learn-reset-cancel').onclick = () => { $('learn-reset-confirm').hidden = true; focus('learn-reset'); };
   $('learn-reset-yes').onclick = () => {
@@ -208,7 +297,7 @@
     $('learn-breath-orbit').classList.remove('is-running', 'is-paused'); $('learn-breath-toggle').textContent = 'Empezar'; updateBreathing();
     $('learn-breath-status').textContent = 'Pausa reiniciada.';
   };
-  window.addEventListener('hashchange', () => {if (location.hash !== '#aprende') {pauseBreathing(); if (activeId) showDashboard();}});
+  window.addEventListener('hashchange', () => {if (location.hash !== '#aprende') {pauseBreathing(); if (activeId || readerId) showDashboard();}});
   document.addEventListener('visibilitychange', () => {if (document.hidden) pauseBreathing();});
   window.addEventListener('pagehide', pauseBreathing);
   window.addEventListener('storage', event => {
@@ -216,5 +305,6 @@
     try {state = event.newValue ? M.normalize(JSON.parse(event.newValue)) : M.blank();} catch {return;}
     showDashboard(); announce('El progreso se ha actualizado desde otra pestaña.');
   });
-  dashboard();
+  renderReferencePages();
+  switchPanel(activePanel, false);
 })();

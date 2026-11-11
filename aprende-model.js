@@ -1,8 +1,8 @@
 /* Contenido y estado de aprendizaje. Sin dependencias ni servicios externos. */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.LoakLearning = factory();
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./aprende-theory.js'));
+  else root.LoakLearning = factory(root.LoakTheory);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (Theory) {
   'use strict';
   const lessons = [
     {
@@ -78,8 +78,10 @@
       ]
     }
   ];
+  lessons.forEach(lesson => { lesson.theory = Theory.chapters[lesson.id]; lesson.minutes = 6; });
+  const topics = lessons.flatMap(lesson => lesson.theory.map(topic => ({...topic, lessonId: lesson.id, lessonTitle: lesson.title})));
   const KEY = 'loak-sleep-learning-v2';
-  const blank = () => ({version: 2, completed: [], days: [], plans: {}, sessions: {}});
+  const blank = () => ({version: 2, completed: [], days: [], plans: {}, sessions: {}, readTheory: [], bookmarks: []});
   const dayKey = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const validDay = value => {
     if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -102,6 +104,9 @@
       state.completed.push(lesson.id);
     }
     if (Array.isArray(input.days)) state.days = [...new Set(input.days.filter(validDay))].sort();
+    for (const field of ['readTheory', 'bookmarks']) {
+      if (Array.isArray(input[field])) state[field] = [...new Set(input[field].filter(id => topics.some(topic => topic.id === id)))];
+    }
     for (const lesson of lessons) {
       const plan = input.plans?.[lesson.id];
       if (Number.isInteger(plan) && plan >= 0 && plan < lesson.plans.length && state.completed.includes(lesson.id)) state.plans[lesson.id] = plan;
@@ -111,7 +116,7 @@
       if (!Array.isArray(session.queue) || session.queue.length > 100 || !session.queue.every(id => ids.includes(id))) continue;
       const phase = ['intro', 'question', 'practice'].includes(session.phase) ? session.phase : 'intro';
       if (phase !== 'practice' && !session.queue.length || phase === 'practice' && session.queue.length) continue;
-      const clean = {phase, queue: [...session.queue], feedback: null, mistakes: Math.max(0, Math.min(999, Number.isInteger(session.mistakes) ? session.mistakes : 0))};
+      const clean = {phase, theoryIndex: Number.isInteger(session.theoryIndex) && session.theoryIndex >= 0 && session.theoryIndex < lesson.theory.length ? session.theoryIndex : 0, queue: [...session.queue], feedback: null, mistakes: Math.max(0, Math.min(999, Number.isInteger(session.mistakes) ? session.mistakes : 0))};
       const q = lesson.questions.find(item => item.id === clean.queue[0]);
       if (q && session.feedback && typeof session.feedback.correct === 'boolean') {
         const answer = session.feedback.answer;
@@ -133,7 +138,7 @@
     if (!unlocked(state, id)) return null;
     if (!state.sessions[id]) {
       const lesson = lessons.find(l => l.id === id);
-      state.sessions[id] = {phase: 'intro', queue: lesson.questions.map(q => q.id), feedback: null, mistakes: 0};
+      state.sessions[id] = {phase: 'intro', theoryIndex: 0, queue: lesson.questions.map(q => q.id), feedback: null, mistakes: 0};
     }
     return state.sessions[id];
   }
@@ -181,5 +186,16 @@
     const pending = lessons.find(l => state.sessions[l.id] && !state.completed.includes(l.id)) || lessons.find(l => state.sessions[l.id]);
     return pending || lessons.find(l => !state.completed.includes(l.id)) || lessons[0];
   }
-  return {lessons, KEY, blank, normalize, dayKey, validDay, equalAnswer, unlocked, start, submit, advance, complete, streak, nextLesson};
+  function readTopic(state, id) {
+    if (!topics.some(topic => topic.id === id)) return false;
+    if (!state.readTheory.includes(id)) state.readTheory.push(id);
+    return true;
+  }
+  function bookmark(state, id) {
+    if (!topics.some(topic => topic.id === id)) return false;
+    const index = state.bookmarks.indexOf(id);
+    if (index < 0) state.bookmarks.push(id); else state.bookmarks.splice(index, 1);
+    return true;
+  }
+  return {lessons, topics, sources: Theory.sources, glossary: Theory.glossary, readTopic, bookmark, KEY, blank, normalize, dayKey, validDay, equalAnswer, unlocked, start, submit, advance, complete, streak, nextLesson};
 });
